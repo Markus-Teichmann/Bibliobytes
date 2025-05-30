@@ -1,14 +1,13 @@
 package com.bibliobytes.backend.dtos;
 
 import com.bibliobytes.backend.entities.Role;
-import com.bibliobytes.backend.validation.Lowercase;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.UUID;
 
 @Data
+@ToString
 public class UserDto {
     private UUID id;
     private String email;

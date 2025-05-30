@@ -1,33 +1,22 @@
 package com.bibliobytes.backend.mappers;
 
 import com.bibliobytes.backend.dtos.*;
-import com.bibliobytes.backend.entities.External;
-import com.bibliobytes.backend.entities.Internal;
-import com.bibliobytes.backend.entities.Role;
+import com.bibliobytes.backend.entities.User;
 import com.bibliobytes.backend.services.Jwt;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    @Mapping(target = "email", expression = "java(user.getExternal().getEmail())")
-    @Mapping(target = "firstName", expression = "java(user.getExternal().getFirstName())")
-    @Mapping(target = "lastName", expression = "java(user.getExternal().getLastName())")
-    UserDto toUserDto(Internal user);
-    UserDto toUserDto(External user);
+    UserDto toDto(User user);
+
+    User toEntity(RegisterUserRequest request);
 
     @Mapping(target = "email", expression = "java(registerToken.getSubject())")
     @Mapping(target = "firstName", expression = "java(registerToken.get(\"firstName\", String.class))")
     @Mapping(target = "lastName", expression = "java(registerToken.get(\"lastName\", String.class))")
     @Mapping(target = "password", expression = "java(registerToken.get(\"password\", String.class))")
-    RegisterUserRequest toUserRequest(Jwt registerToken);
-    RegisterUserRequest toUserRequest(RegisterProfileRequest request);
+    //@Mapping(target = "role", expression = "java(com.bibliobytes.backend.entities.Role.valueOf(registerToken.get(\"role\", String.class)))")
+    User toEntity(Jwt registerToken);
 
-    External toExternal(RegisterUserRequest request);
-    Internal toInternal(RegisterUserRequest request);
-
-    void updateExternal(RegisterUserRequest request, @MappingTarget External external);
-    void updateInternal(RegisterUserRequest request, @MappingTarget Internal internal);
-    void updateInternal(Role role, @MappingTarget Internal internal);
 }

@@ -2,6 +2,7 @@ package com.bibliobytes.backend.services;
 
 import com.bibliobytes.backend.config.JwtConfig;
 import com.bibliobytes.backend.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.entities.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

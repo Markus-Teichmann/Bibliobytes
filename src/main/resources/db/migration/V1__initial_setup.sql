@@ -1,9 +1,15 @@
-create table externals
+create table users
 (
     email      varchar(100)                             not null,
     first_name varchar(20)                              not null,
     last_name  varchar(20)                              not null,
-    id         BINARY(16) default (UUID_TO_BIN(UUID())) not null primary key
+    role                varchar(10) default "EXTERNAL"  not null,
+    password            varchar(100)                    null,
+    id         BINARY(16) default (UUID_TO_BIN(UUID())) not null primary key,
+    constraint role_check check (
+        (role <> 'EXTERNAL' AND Password IS NOT NULL) OR
+        (role = 'EXTERNAL' AND Password IS NULL)
+    )
 );
 
 create table tags
@@ -23,7 +29,7 @@ create table items
     note  varchar(500)  null,
     id    BIGINT auto_increment primary key,
     constraint items_external_id
-        foreign key (owner) references externals (id)
+        foreign key (owner) references users (id)
             on update cascade on delete set null
 );
 
@@ -96,26 +102,17 @@ create table digital_details
         foreign key (subtitle_id) references subtitles (id)
 );
 
-create table internals
-(
-    password            varchar(100)                     not null,
-    role                varchar(10) default "APPLICANT"  not null,
-    external_id         binary(16)                       not null primary key,
-    constraint users_profiles_id_fk
-        foreign key (external_id) references externals (id)
-);
-
 create table rentals
 (
     item_id             BIGINT                                       not null,
-    internal_id          binary(16)                                   not null,
+    user_id          binary(16)                                   not null,
     start_date          DATE        default (CURDATE())              not null,
     end_date            DATE        default (DATE_ADD(CURDATE(), INTERVAL 4 Week)) not null,
     status              varchar(10) default 'requested'              not null,
     external_id         binary(16)                                   null,
     id                  BIGINT auto_increment primary key,
     constraint rentals_internals_id
-        foreign key (internal_id) references internals (external_id),
+        foreign key (user_id) references users (id),
     constraint rentals_external_id
-        foreign key (external_id) references externals (id)
+        foreign key (external_id) references users (id)
 );
