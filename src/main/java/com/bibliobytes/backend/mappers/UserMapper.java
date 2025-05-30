@@ -17,14 +17,15 @@ public interface UserMapper {
     UserDto toUserDto(Internal user);
     UserDto toUserDto(External user);
 
-    @Mapping(target = "email", expression = "java(registerToken.get(\"email\", String.class))")
+    @Mapping(target = "email", expression = "java(registerToken.getSubject())")
     @Mapping(target = "firstName", expression = "java(registerToken.get(\"firstName\", String.class))")
     @Mapping(target = "lastName", expression = "java(registerToken.get(\"lastName\", String.class))")
     @Mapping(target = "password", expression = "java(registerToken.get(\"password\", String.class))")
     RegisterUserRequest toUserRequest(Jwt registerToken);
+    RegisterUserRequest toUserRequest(RegisterProfileRequest request);
 
     External toExternal(RegisterUserRequest request);
-    Internal toInternal(RegisterUserRequest request, Role role);
+    Internal toInternal(RegisterUserRequest request);
 
     void updateExternal(RegisterUserRequest request, @MappingTarget External external);
     void updateInternal(RegisterUserRequest request, @MappingTarget Internal internal);

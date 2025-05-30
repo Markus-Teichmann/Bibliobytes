@@ -59,6 +59,7 @@ public class SecurityConfig {
             ).csrf(c -> c.disable()) // Disabeling csrf
             .authorizeHttpRequests(c -> c
                 .requestMatchers("/users/**").permitAll()
+                .requestMatchers("/registration/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

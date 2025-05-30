@@ -98,9 +98,8 @@ create table digital_details
 
 create table internals
 (
-    username            varchar(100)                     not null,
     password            varchar(100)                     not null,
-    role                varchar(10) default 'APPLICANT'  not null,
+    role                varchar(10) default "APPLICANT"  not null,
     external_id         binary(16)                       not null primary key,
     constraint users_profiles_id_fk
         foreign key (external_id) references externals (id)

@@ -1,7 +1,6 @@
 package com.bibliobytes.backend.services;
 
 import com.bibliobytes.backend.dtos.*;
-import com.bibliobytes.backend.entities.External;
 import com.bibliobytes.backend.entities.Internal;
 import com.bibliobytes.backend.entities.Role;
 import com.bibliobytes.backend.mappers.UserMapper;
@@ -32,15 +31,15 @@ public class UserService implements UserDetailsService {
             var external = externalRepository.findByEmail(request.getEmail()).orElse(null);
             Internal internal = null;
             if (external == null) {
-                internal = userMapper.toInternal(request, Role.APPLICANT);
+                internal = userMapper.toInternal(request);
                 userMapper.updateExternal(request, internal.getExternal());
                 externalRepository.save(internal.getExternal());
 
             } else {
                 internal = new Internal(external);
                 userMapper.updateInternal(request, internal);
-                userMapper.updateInternal(Role.APPLICANT, internal);
             }
+            internal.setRole(Role.APPLICANT);
             internalRepository.save(internal);
             return userMapper.toUserDto(internal);
         }

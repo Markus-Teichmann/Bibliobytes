@@ -17,6 +17,10 @@ public class Jwt {
         return claims.getExpiration().before(new Date());
     }
 
+    public String getSubject() {
+        return claims.getSubject();
+    }
+
     public <T> T get(String name, Class<T> clazz) {
         return claims.get(name, clazz);
     }

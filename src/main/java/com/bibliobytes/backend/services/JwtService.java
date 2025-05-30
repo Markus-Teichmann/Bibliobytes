@@ -21,7 +21,7 @@ public class JwtService {
                 .add("firstName", request.getFirstName())
                 .add("lastName", request.getLastName())
                 .add("password", request.getPassword())
-                .add("verificationCode", verificationCode)
+                .add("code", verificationCode)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * config.getRegisterRequestTokenExpiration()))
                 .build();

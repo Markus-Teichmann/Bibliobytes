@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
@@ -16,7 +17,6 @@ import java.util.UUID;
 @Table(name = "internals")
 public class Internal {
     @Id
-    @Size(max = 16)
     @Column(name = "external_id", nullable = false, length = 16)
     private UUID id;
 
@@ -37,7 +37,6 @@ public class Internal {
     @Column(name = "password")
     private String password;
 
-    @NotNull
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
