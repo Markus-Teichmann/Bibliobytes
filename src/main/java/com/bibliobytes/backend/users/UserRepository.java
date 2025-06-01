@@ -1,7 +1,7 @@
-package com.bibliobytes.backend.repositorys;
+package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.entities.Role;
-import com.bibliobytes.backend.entities.User;
+import com.bibliobytes.backend.users.entities.Role;
+import com.bibliobytes.backend.users.entities.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

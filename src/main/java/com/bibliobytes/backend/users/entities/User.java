@@ -1,4 +1,4 @@
-package com.bibliobytes.backend.entities;
+package com.bibliobytes.backend.users.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

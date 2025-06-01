@@ -1,6 +1,6 @@
-package com.bibliobytes.backend.dtos;
+package com.bibliobytes.backend.users.dtos;
 
-import com.bibliobytes.backend.entities.Role;
+import com.bibliobytes.backend.users.entities.Role;
 import lombok.Data;
 import lombok.ToString;
 

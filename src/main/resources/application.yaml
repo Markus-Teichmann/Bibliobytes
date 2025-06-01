@@ -7,8 +7,16 @@ spring:
     password: toor
   jpa:
     show-sql: true
-  jwt:
-    signingKey: ${JWT_SIGNING_KEY}
+  jwe:
+    issuer: bibliobytes
     registerRequestTokenExpiration: 600 # = 60 * 10 = 10 Minuten
     accessTokenExpiration: 300 # = 60 * 5 = 5 Minuten
     refreshTokenExpiration: 604800 # = 60 * 60 * 24 * 7 = 7 Tage
+    signing:
+      key-id: signing-key
+      public-key: ${JWT_PUBLIC_SIGNING_KEY}
+      private-key: ${JWT_PRIVATE_SIGNING_KEY}
+    encryption:
+      key-id: encryption-key
+      public-key: ${JWT_PUBLIC_ENCRYPTION_KEY}
+      private-key: ${JWT_PRIVATE_ENCRYPTION_KEY}

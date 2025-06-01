@@ -1,4 +1,4 @@
-package com.bibliobytes.backend.entities;
+package com.bibliobytes.backend.users.entities;
 
 public enum Role {
     EXTERNAL,

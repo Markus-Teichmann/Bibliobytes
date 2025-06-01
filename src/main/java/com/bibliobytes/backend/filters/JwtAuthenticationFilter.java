@@ -1,7 +1,7 @@
 package com.bibliobytes.backend.filters;
 
-import com.bibliobytes.backend.entities.Role;
-import com.bibliobytes.backend.services.JwtService;
+import com.bibliobytes.backend.users.entities.Role;
+import com.bibliobytes.backend.services.JweService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +21,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final JweService jweService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Token abgelaufen oder nicht angegeben.
         var token = authHeader.replace("Bearer ", "");
-        var jwt = jwtService.parse(token);
+        var jwt = jweService.parse(token);
         if (jwt == null || jwt.isExpired()) {
             filterChain.doFilter(request, response);
             return;

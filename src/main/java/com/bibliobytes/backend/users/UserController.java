@@ -1,17 +1,17 @@
-package com.bibliobytes.backend.controllers;
+package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.config.JwtConfig;
-import com.bibliobytes.backend.dtos.*;
-import com.bibliobytes.backend.entities.Role;
-import com.bibliobytes.backend.mappers.UserMapper;
-import com.bibliobytes.backend.repositorys.UserRepository;
-import com.bibliobytes.backend.services.JwtService;
-import com.bibliobytes.backend.services.UserService;
+import com.bibliobytes.backend.config.JweConfig;
+import com.bibliobytes.backend.users.dtos.ConfirmCodeRequest;
+import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.UserDto;
+import com.bibliobytes.backend.users.entities.Role;
+import com.bibliobytes.backend.services.JweService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -22,18 +22,19 @@ import java.util.stream.IntStream;
 @RequestMapping("/users")
 @AllArgsConstructor
 public class UserController {
-    private final JwtConfig jwtConfig;
-    private final JwtService jwtService;
+    private final JweConfig jwtConfig;
+    private final JweService jweService;
     private final UserRepository userRepository;
     private final UserService userService;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping()
     public ResponseEntity<?> registerUser(
             @Valid @RequestBody RegisterUserRequest request,
             HttpServletResponse response,
             UriComponentsBuilder uriBuilder
-    ) {
+    ) throws Exception {
         var user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (!(user == null || (user.getRole() == Role.EXTERNAL && request.getPassword() != null))) {
             return ResponseEntity.badRequest().body(
@@ -51,7 +52,7 @@ public class UserController {
             System.out.println("Der Code für die Email lautet: " + code);
 
             // Passenden Token erstellen
-            var registerToken = jwtService.generateRegisterRequestToken(request, code);
+            var registerToken = jweService.generateRegisterRequestToken(request, code);
 
             // Token in die Antwort packen!
             var cookie = new Cookie("register_request_token", registerToken.toString());
@@ -82,7 +83,7 @@ public class UserController {
         @CookieValue(value = "register_request_token") String token,
         UriComponentsBuilder uriBuilder
     ) {
-        var jwt = jwtService.parse(token);
+        var jwt = jweService.parse(token);
         if (jwt == null || jwt.isExpired()) {
             return ResponseEntity.badRequest().body(
                     Map.of("message", "Token expired")
@@ -96,9 +97,8 @@ public class UserController {
         var user = userRepository.findByEmail(jwt.getSubject()).orElse(null);
         if (user == null) {
             user = userMapper.toEntity(jwt);
-        } else {
-            user.setPassword(jwt.get("password", String.class));
         }
+        user.setPassword(passwordEncoder.encode(jwt.get("password", String.class)));
         userRepository.save(user);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
         return ResponseEntity.created(uri).body(userMapper.toDto(user));

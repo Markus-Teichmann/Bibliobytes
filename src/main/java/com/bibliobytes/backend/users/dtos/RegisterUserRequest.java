@@ -1,4 +1,4 @@
-package com.bibliobytes.backend.dtos;
+package com.bibliobytes.backend.users.dtos;
 
 import com.bibliobytes.backend.validation.Lowercase;
 import jakarta.validation.constraints.Email;

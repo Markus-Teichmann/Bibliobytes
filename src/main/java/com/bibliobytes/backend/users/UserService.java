@@ -1,10 +1,8 @@
-package com.bibliobytes.backend.services;
+package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.dtos.*;
-import com.bibliobytes.backend.entities.Role;
-import com.bibliobytes.backend.entities.User;
-import com.bibliobytes.backend.mappers.UserMapper;
-import com.bibliobytes.backend.repositorys.UserRepository;
+import com.bibliobytes.backend.users.dtos.UserDto;
+import com.bibliobytes.backend.users.entities.Role;
+import com.bibliobytes.backend.users.entities.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

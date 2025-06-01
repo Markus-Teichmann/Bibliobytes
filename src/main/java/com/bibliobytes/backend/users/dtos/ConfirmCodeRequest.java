@@ -1,4 +1,4 @@
-package com.bibliobytes.backend.dtos;
+package com.bibliobytes.backend.users.dtos;
 
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
