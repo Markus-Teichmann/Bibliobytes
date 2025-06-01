@@ -45,16 +45,16 @@ public class UserController {
             user = userMapper.toEntity(request);
         }
         if (request.getPassword() != null) {
-            // Mail rausschicken
+            // Generate Random Code
             IntStream stream = new Random().ints(6L, 0, 10);
             String code = Arrays.toString(stream.toArray());
             code = code.replaceAll("[^0-9]", "");
             System.out.println("Der Code für die Email lautet: " + code);
 
-            // Passenden Token erstellen
+            // Create Token
             var registerToken = jweService.generateRegisterRequestToken(request, code);
 
-            // Token in die Antwort packen!
+            // Place Token in Response
             var cookie = new Cookie("register_request_token", registerToken.toString());
             cookie.setHttpOnly(true);
             cookie.setPath("/users");
@@ -62,7 +62,8 @@ public class UserController {
             cookie.setSecure(true);
             response.addCookie(cookie);
 
-            // Antwort raus schicken.
+            // Send Email.
+            // Maybe badRequest is no fitting
             return ResponseEntity.badRequest().body(
                     Map.of(
                             "token", registerToken.toString(),

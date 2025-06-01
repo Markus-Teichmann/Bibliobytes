@@ -19,8 +19,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
-
 @Configuration
 @EnableWebSecurity
 @AllArgsConstructor
@@ -49,15 +47,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // Stateless sessions (token-based authentification)
-        // Disable CSRF
-        //Browser gets tricked into making request of a other user without its knowledge
-        //Common on SSR but we use CSR so there is no need
-        // Authorize which enpoints are public and which are private
         http
             .sessionManagement(c ->
-                c.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // No need to manage any state on the server so no sessions
-            ).csrf(c -> c.disable()) // Disabeling csrf
+                c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            ).csrf(c -> c.disable())
             .authorizeHttpRequests(c -> c
                 .requestMatchers("/users/**").permitAll()
                 .requestMatchers("/registration/**").permitAll()
@@ -67,7 +60,6 @@ public class SecurityConfig {
             .sessionManagement(session ->
                     session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
             .exceptionHandling(c ->
                 {
                     c.authenticationEntryPoint(

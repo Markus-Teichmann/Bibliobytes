@@ -2,21 +2,16 @@ package com.bibliobytes.backend.services;
 
 import com.bibliobytes.backend.config.JweConfig;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
-import com.bibliobytes.backend.utils.ClaimsSetUtils;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jwt.JWTClaimsSet;
-import com.nimbusds.jwt.SignedJWT;
 import lombok.AllArgsConstructor;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -64,7 +59,6 @@ public class JweService {
             }
             return null;
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }
