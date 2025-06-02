@@ -18,6 +18,14 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
+    public Optional<User> findById(UUID id) {
+        return userRepository.findById(id);
+    }
+
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
     public Map<String, List<UserDto>> getAllUsers() {
         return Map.of(
             "externals", userRepository.findAllByRole(Role.EXTERNAL).stream().map(userMapper::toDto).toList(),

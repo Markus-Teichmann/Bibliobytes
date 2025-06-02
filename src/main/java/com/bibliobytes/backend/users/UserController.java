@@ -1,11 +1,13 @@
 package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.config.JweConfig;
+import com.bibliobytes.backend.auth.config.JweConfig;
+import com.bibliobytes.backend.email.MailServerConfig;
+import com.bibliobytes.backend.email.MailService;
 import com.bibliobytes.backend.users.dtos.ConfirmCodeRequest;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.Role;
-import com.bibliobytes.backend.services.JweService;
+import com.bibliobytes.backend.auth.services.JweService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,16 +28,18 @@ public class UserController {
     private final JweService jweService;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final MailServerConfig mailConfig;
+    private final MailService mailService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
-    @PostMapping()
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(
             @Valid @RequestBody RegisterUserRequest request,
             HttpServletResponse response,
             UriComponentsBuilder uriBuilder
     ) throws Exception {
-        var user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        var user = userService.findByEmail(request.getEmail()).orElse(null);
         if (!(user == null || (user.getRole() == Role.EXTERNAL && request.getPassword() != null))) {
             return ResponseEntity.badRequest().body(
                     Map.of("email", "Email is allready registered.")
@@ -49,6 +53,13 @@ public class UserController {
             IntStream stream = new Random().ints(6L, 0, 10);
             String code = Arrays.toString(stream.toArray());
             code = code.replaceAll("[^0-9]", "");
+
+            mailService.sendSimpleMessage(
+                    mailConfig.getFrom(),
+                    user.getEmail(),
+                    "Registrierung bei Bibiliobytes",
+                    "Bitte gebe den Code: " + code + "auf der Website ein."
+            );
             System.out.println("Der Code für die Email lautet: " + code);
 
             // Create Token
@@ -78,7 +89,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(userMapper.toDto(user));
     }
 
-    @PostMapping("/code")
+    @PostMapping("/confirm")
     public ResponseEntity<?> confirmCode(
         @Valid @RequestBody ConfirmCodeRequest codeRequest,
         @CookieValue(value = "register_request_token") String token,
@@ -114,7 +125,42 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @GetMapping()
+    @GetMapping("/applicants")
+    public ResponseEntity<List<UserDto>> getApplicants() {
+        return null;
+    }
+
+    @PutMapping("/updateRole")
+    public ResponseEntity<Void> updateRole() {
+        return null;
+    }
+
+    @PutMapping("/updateEmail")
+    public ResponseEntity<Void> updateEmail() {
+        return null;
+    }
+
+    @PutMapping("/updatePassword")
+    public ResponseEntity<Void> updatePassword() {
+        return null;
+    }
+
+    @PutMapping("/updateFirstName")
+    public ResponseEntity<Void> updateFirstName() {
+        return null;
+    }
+
+    @PutMapping("/updateLastName")
+    public ResponseEntity<Void> updateLastName() {
+        return null;
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteUser() {
+        return null;
+    }
+
+    @GetMapping("/all")
     public Map<String, List<UserDto>> getAllUsers() {
         return userService.getAllUsers();
     }

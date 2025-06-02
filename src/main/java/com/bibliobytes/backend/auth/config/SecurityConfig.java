@@ -1,9 +1,11 @@
-package com.bibliobytes.backend.config;
+package com.bibliobytes.backend.auth.config;
 
-import com.bibliobytes.backend.filters.JwtAuthenticationFilter;
+import com.bibliobytes.backend.auth.JwtAuthenticationFilter;
+import com.bibliobytes.backend.users.entities.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -52,8 +54,20 @@ public class SecurityConfig {
                 c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             ).csrf(c -> c.disable())
             .authorizeHttpRequests(c -> c
-                .requestMatchers("/users/**").permitAll()
-                .requestMatchers("/registration/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
+                .requestMatchers(HttpMethod.POST,"/users/confirm").permitAll()
+                .requestMatchers(HttpMethod.GET,"/users/{id}").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/users/all").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/users/applicants").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/users/updateRole").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/users/updateEmail").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/users/updatePassword").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/users/updateFirstName").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT,"/users/updateLastName").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/users").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
+                .requestMatchers(HttpMethod.POST,"/auth/refresh").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/auth/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

@@ -1,25 +1,24 @@
-package com.bibliobytes.backend.services;
+package com.bibliobytes.backend.auth.services;
 
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSAEncrypter;
+import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 import lombok.SneakyThrows;
 
 import lombok.AllArgsConstructor;
-import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
-import org.springframework.security.oauth2.jwt.*;
-
-import java.time.Instant;
+import java.util.Date;
 
 @AllArgsConstructor
 public class Jwe {
-    private final JwtClaimsSet claims;
+    private final JWTClaimsSet claims;
     private final RSAKey signingKey;
     private final RSAKey encryptionKey;
-    private final JwtEncoder jwtEncoder;
 
     public boolean isExpired() {
-        return claims.getExpiresAt().isBefore(Instant.now());
+        return claims.getExpirationTime().before(new Date());
     }
 
     public String getSubject() {
@@ -36,14 +35,13 @@ public class Jwe {
 
     @SneakyThrows
     public String toString() {
-        JwsHeader jwsHeader = JwsHeader
-                .with(SignatureAlgorithm.RS256)
-                .keyId(signingKey.getKeyID())
+        JWSHeader jwsHeader = new JWSHeader
+                .Builder(JWSAlgorithm.RS256)
+                .keyID(signingKey.getKeyID())
                 .build();
 
-        String jws = jwtEncoder
-                .encode(JwtEncoderParameters.from(jwsHeader, claims))
-                .getTokenValue();
+        SignedJWT signedJWT = new SignedJWT(jwsHeader, claims);
+        signedJWT.sign(new RSASSASigner(signingKey));
 
         JWEHeader jweHeader = new JWEHeader
                 .Builder(JWEAlgorithm.RSA_OAEP_256, EncryptionMethod.A128GCM)
@@ -51,7 +49,7 @@ public class Jwe {
                 .keyID(encryptionKey.getKeyID())
                 .build();
 
-        JWEObject jweObject = new JWEObject(jweHeader, new Payload(jws));
+        JWEObject jweObject = new JWEObject(jweHeader, new Payload(signedJWT));
         jweObject.encrypt(new RSAEncrypter(encryptionKey.toRSAPublicKey()));
 
         return jweObject.serialize();

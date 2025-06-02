@@ -1,7 +1,7 @@
-package com.bibliobytes.backend.filters;
+package com.bibliobytes.backend.auth;
 
 import com.bibliobytes.backend.users.entities.Role;
-import com.bibliobytes.backend.services.JweService;
+import com.bibliobytes.backend.auth.services.JweService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +16,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @Component
@@ -34,7 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Token abgelaufen oder nicht angegeben.
         var token = authHeader.replace("Bearer ", "");
+
         var jwt = jweService.parse(token);
+
         if (jwt == null || jwt.isExpired()) {
             filterChain.doFilter(request, response);
             return;
@@ -42,7 +43,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Authentication setzen.
         var authentication = new UsernamePasswordAuthenticationToken(
-                jwt.get("id", UUID.class),
+                jwt.getSubject(),
                 null,
                 List.of(new SimpleGrantedAuthority("ROLE_" + jwt.get("role", Role.class)))
         );

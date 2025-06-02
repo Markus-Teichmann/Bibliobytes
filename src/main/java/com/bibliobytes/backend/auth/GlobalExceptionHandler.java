@@ -1,4 +1,4 @@
-package com.bibliobytes.backend.controllers;
+package com.bibliobytes.backend.auth;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
