@@ -5,14 +5,17 @@ import com.bibliobytes.backend.email.MailServerConfig;
 import com.bibliobytes.backend.email.MailService;
 import com.bibliobytes.backend.users.dtos.ConfirmCodeRequest;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.UpdateRole;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.auth.services.JweService;
+import com.bibliobytes.backend.users.entities.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -127,36 +130,50 @@ public class UserController {
 
     @GetMapping("/applicants")
     public ResponseEntity<List<UserDto>> getApplicants() {
-        return null;
+        var applicants = userRepository.findAllByRole(Role.APPLICANT)
+                .stream().map(a -> userMapper.toDto(a)).toList();
+        return ResponseEntity.ok(applicants);
     }
 
     @PutMapping("/updateRole")
-    public ResponseEntity<Void> updateRole() {
-        return null;
+    public ResponseEntity<UserDto> updateRole(
+        @Valid @RequestBody UpdateRole request
+    ) {
+        var user = userService.findMe();
+        user.setRole(request.getRole());
+        userRepository.save(user);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PutMapping("/updateEmail")
     public ResponseEntity<Void> updateEmail() {
+        var user = userService.findMe();
+        // ToDo: In der ConfirmCode Methode können wir über den aud claim bestimmen, welche Methode danach aufgerufen werden soll.
+        // ToDo: Diese Methode sollten private sein und das Ganze Update zeug machen.
         return null;
     }
 
     @PutMapping("/updatePassword")
     public ResponseEntity<Void> updatePassword() {
+        var user = userService.findMe();
         return null;
     }
 
     @PutMapping("/updateFirstName")
     public ResponseEntity<Void> updateFirstName() {
+        var user = userService.findMe();
         return null;
     }
 
     @PutMapping("/updateLastName")
     public ResponseEntity<Void> updateLastName() {
+        var user = userService.findMe();
         return null;
     }
 
     @DeleteMapping()
     public ResponseEntity<Void> deleteUser() {
+        var user = userService.findMe();
         return null;
     }
 

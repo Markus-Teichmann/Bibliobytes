@@ -1,9 +1,11 @@
 package com.bibliobytes.backend.auth;
 
 import com.bibliobytes.backend.auth.config.JweConfig;
+import com.bibliobytes.backend.auth.dtos.LoginRequest;
 import com.bibliobytes.backend.users.UserMapper;
-import com.bibliobytes.backend.users.dtos.JweResponse;
+import com.bibliobytes.backend.auth.dtos.JweResponse;
 import com.bibliobytes.backend.auth.services.JweService;
+import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import jakarta.servlet.http.Cookie;
@@ -29,6 +31,7 @@ public class AuthController {
     private final JweService jweService;
     private final JweConfig config;
     private final UserMapper userMapper;
+    private final UserRepository userRepository;
 
     @PostMapping("/login")
     public ResponseEntity<JweResponse> login(
@@ -41,7 +44,7 @@ public class AuthController {
                         request.getPassword()
                 )
         );
-        var user = userService.findByEmail(request.getEmail()).orElseThrow();
+        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
         var accessToken = jweService.generateAccessToken(user);
         var refreshToken = jweService.generateRefreshToken(user);
 
@@ -64,7 +67,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        var user = userService.findById(UUID.fromString(jwe.getSubject())).orElseThrow();
+        var user = userRepository.findById(UUID.fromString(jwe.getSubject())).orElseThrow();
         var accessToken = jweService.generateAccessToken(user);
 
         return ResponseEntity.ok(new JweResponse(accessToken.toString()));
@@ -72,16 +75,8 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDto> me() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var userId = UUID.fromString((String) authentication.getPrincipal());
-
-        var user = userService.findById(userId).orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+        var user = userService.findMe();
         var userDto = userMapper.toDto(user);
-
         return ResponseEntity.ok(userDto);
     }
 

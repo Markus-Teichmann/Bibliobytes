@@ -23,7 +23,11 @@ public class JweService {
     public Jwe generateRefreshToken(User user) throws Exception {
         return generateToken(
                 user.getId().toString(),
-                Collections.emptyMap(),
+                Map.of(
+                        "email", user.getEmail(),
+                        "firstName", user.getFirstName(),
+                        "lastName", user.getLastName()
+                ),
                 config.getRefreshTokenExpiration()
         );
     }
@@ -32,9 +36,6 @@ public class JweService {
         return generateToken(
                 user.getId().toString(),
                 Map.of(
-                        "email", user.getEmail(),
-                        "firstName", user.getFirstName(),
-                        "lastName", user.getLastName(),
                         "role", user.getRole()
                 ),
                 config.getAccessTokenExpiration()

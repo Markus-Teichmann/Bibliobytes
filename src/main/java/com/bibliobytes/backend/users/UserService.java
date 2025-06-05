@@ -4,6 +4,7 @@ import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.users.entities.User;
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,12 +19,10 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public Optional<User> findById(UUID id) {
-        return userRepository.findById(id);
-    }
-
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findMe() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        var userId = UUID.fromString((String) authentication.getPrincipal());
+        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
     public Map<String, List<UserDto>> getAllUsers() {
