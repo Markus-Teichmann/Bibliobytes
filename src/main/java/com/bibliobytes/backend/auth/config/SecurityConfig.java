@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/users/register").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/confirm").permitAll()
                 .requestMatchers(HttpMethod.GET,"/users/{id}").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET,"/users/all").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/users").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/users/applicants").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/updateRole").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/updateEmail").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())

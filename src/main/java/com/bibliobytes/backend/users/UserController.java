@@ -42,7 +42,7 @@ public class UserController {
             HttpServletResponse response,
             UriComponentsBuilder uriBuilder
     ) throws Exception {
-        var user = userService.findByEmail(request.getEmail()).orElse(null);
+        var user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (!(user == null || (user.getRole() == Role.EXTERNAL && request.getPassword() != null))) {
             return ResponseEntity.badRequest().body(
                     Map.of("email", "Email is allready registered.")
@@ -57,12 +57,13 @@ public class UserController {
             String code = Arrays.toString(stream.toArray());
             code = code.replaceAll("[^0-9]", "");
 
-            mailService.sendSimpleMessage(
-                    mailConfig.getFrom(),
-                    user.getEmail(),
-                    "Registrierung bei Bibiliobytes",
-                    "Bitte gebe den Code: " + code + "auf der Website ein."
-            );
+            // Email verschicken
+//            mailService.sendSimpleMessage(
+//                    mailConfig.getFrom(),
+//                    user.getEmail(),
+//                    "Registrierung bei Bibiliobytes",
+//                    "Bitte gebe den Code: " + code + "auf der Website ein."
+//            );
             System.out.println("Der Code für die Email lautet: " + code);
 
             // Create Token
@@ -76,9 +77,7 @@ public class UserController {
             cookie.setSecure(true);
             response.addCookie(cookie);
 
-            // Send Email.
-            // Maybe badRequest is no fitting
-            return ResponseEntity.badRequest().body(
+            return ResponseEntity.ok().body(
                     Map.of(
                             "token", registerToken.toString(),
                             "message", "Wir haben Ihnen eine Email mit einem Bestätigungscode and ihre Emailadresse " +
@@ -139,7 +138,11 @@ public class UserController {
     public ResponseEntity<UserDto> updateRole(
         @Valid @RequestBody UpdateRole request
     ) {
-        var user = userService.findMe();
+        System.out.println("Test");
+        var user = userRepository.findById(request.getId()).orElse(null);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
         user.setRole(request.getRole());
         userRepository.save(user);
         return ResponseEntity.ok(userMapper.toDto(user));
@@ -177,7 +180,7 @@ public class UserController {
         return null;
     }
 
-    @GetMapping("/all")
+    @GetMapping()
     public Map<String, List<UserDto>> getAllUsers() {
         return userService.getAllUsers();
     }

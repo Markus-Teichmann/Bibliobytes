@@ -1,0 +1,111 @@
+@adminAccessToken=eyJraWQiOiJlbmNyeXB0aW9uLWtleSIsImN0eSI6IkpXVCIsImVuYyI6IkExMjhHQ00iLCJhbGciOiJSU0EtT0FFUC0yNTYifQ.PmIFDVMRg6gZDJG2-vNqGdr8hnH4FqwBzQOR_haZFZgVQXY4DyjoPp-HtQdj_c7DWxR1cvX-kkpzXXDTgC8PoE_yip8i6YHUYXK44u18ClTgxlDevUWYSqrUp2n9Fh3NzOz50ab2SrypgKFRjzfdT_TFWTvQHLIsGzcCkMz078zlN1iLfCvzUOkbt2PXeZTeO-Sfyefojo2RuUMXJG6lVV9eH5bvlwoFGQ2WL_weIomR-8CcQqkP0gIKKJW3FJmiH0bfq2JdgIG24iG-N619usuQa5TaSnWu0yEvXtHrafC0m26eVG1jIB51ARqakPRg2BJJ2c4y8r0IhnfzyCU7GA.XTyh0iEdWy9qGvYu.hlGv4C4C7vx52CC8WlY7pe9HeGIQirONrbLWhj9vr9E_zZVFcCB10K1w6_mWZMxC7_szRDCiV6VWgB4qTzqfktuC0a76NfqWof45HjSzTUm-rTZKZnvED-CAb4i9OUafvUvtvMnK82SAkF0VegMlQK4IVZ5cVkmgfeCCLhnAiVsVac_C6QvpPf9hXJkkZhwwUZNKukjEtYJK2QxXcDpPH95xNnl942evd5X6F02u-QXDJ_WY6iFcc2bWJ7n-nEJv5L_7fTqw3EE4Rj4nhuhVg8q7slhulkJRKbaVBwkuDbh6UzRrFJciA2qyUmquAqShk2Y9OEEuKWI_k3_ucbRCtNOls407IgBdj4SEZV2s-VScJReaSMn7l6wDY6gSSMYU3THcSaZ5zXSvpFiiRaAxgEri2iFDI8YH5DD9hgEjqyYni-niMzwXEGtOlRv9rk_G5PHWAJUyZ4yI5YQ-ryTNcte1F4HQ6FK0Wr8-nirVoxKius7PtB9ZlHFQnHQJhDOKVGt5UtzuAIvC4GProYOtYKTgAhy_raNE4WsCAl0BlDLGnsB_Mnz9u9o4JBOLE_C1j9EvOkJeL_trM67e9T-ssMQe54OQbMMHQxvMqqwnryeUgbg2yg2yCTSDwrZah5IqvBBMEMTFVz2KLuYmxbm9h7MIcR4eU-vsdPSuNvWAynKr3GFg_pyDX7FVFGQm2hiy-I0FvmkuYZYxvj26RyesvgI.qSCsO2Kw85W_ifNw0XW3Kw
+@adminRefreshToken=asdf
+@userAccessToken=eyJraWQiOiJlbmNyeXB0aW9uLWtleSIsImN0eSI6IkpXVCIsImVuYyI6IkExMjhHQ00iLCJhbGciOiJSU0EtT0FFUC0yNTYifQ.ONPs_N1p4Nxh1AShXFYykL8-nOnyjx--GQUon9NTppezqb1OtBLwiV1AX7akAZoL417dLa1IkE4ZSyZbqAtYgoxAZ14qcPgsJCxuDOQHdlP7PneGu0kJBzO8sMK2B1hwCJjN6VdWGqav2ITSBaHggOO2qmeTUO6NTaiPX1brhMjkDO2mZ9nuXmfGXQKtooe0ltCg9p2pPF3iLaa5iyHmZGRKqQDij1S1i-_Zlx7TC8ygHA-be8954aHQsnqv1Mi9IIKbSPLtYYjb6DxDqQDoQSAEmpohn5DNid1ZtWlvaVUISTh8lnJ0kPlUer1lvees5VTVk1l8xhPc_B8OI8x1gg.BtEQJRE8sO9INayQ.iBZoOrnptfSwR8AO46KbuO-M-PO6WnxyNZzSng11TlyYQQ3AgmW7k9mXDmVL2zJzul9Y9O1ln2SJCDm1Wd_xE7DHmHQpQNqB_cQLU5gP4UXw8OZPu6K0Z-MNvsDs8SJTZFmBPRJZ5Jh9blGDJGpLXjKT501A8JHrcaqU2fpOrleByresp7FKA8sbb6ZV_joxnNTeNmpimuUUs-eoojlYKd4V1BIZN_UXvdk7WiRvha_nLnIIA1uK27tOngMpfL7mWcoYgtvTGX0HHSChSWLTHj5KDfJ-uKITlGz4hr5Q7tO8xAgBsOQ4Q9SOL3EW7GOFypUyVZBcySdM02KJ6-GblJ7pb61KjQgfBbPvN1ApCZScgcZBwP6TdJnq43wp_OEUqSUzMwx8ubme6dIMS6TgLRK3WuFNqBkAltrK9qmgO0QQA6amsXqW4YJZeR5PG4qXlsQSiR7TYcYp8kEdtDth_gaRAbFN1u2vBjaHiWgbvJW4FBSZmSi638gUoetthgMCbtSS-dOHNUeAt4ot5S_cfLZwaTNwf1Lmzp_jiZH55K9tOUst_HRVo8RxGNKjt7cIuwkOHzgyHLv7KvWXhdKXiWcx6Nk4jx8k8f4OucWtGeiJckKQ8miWr1UTTPjFLJu2OyGV9CPG1Ufs4sIKn_sRFSOZVkTVaVslX0mG3NeLAgGjrP91MOKDIe-MRo7JfCKQOP8FWMcK000uVqIbw9Kg.zZopK_vf3ht7CXd6ABLgIg
+@userRefreshToken=asdf
+
+### Externe erstellen:
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "email": "external.one@bibliobytes.at",
+  "firstName": "external",
+  "lastName": "one"
+}
+
+### User erstellen:
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "email": "user.one@bibliobytes.at",
+  "firstName": "user",
+  "lastName": "one",
+  "password": "123456"
+}
+
+### Code bestätigen:
+POST http://localhost:8080/users/confirm
+Cookie: register_request_token=eyJraWQiOiJlbmNyeXB0aW9uLWtleSIsImN0eSI6IkpXVCIsImVuYyI6IkExMjhHQ00iLCJhbGciOiJSU0EtT0FFUC0yNTYifQ.B3SPpUgIQQOEtTBf5V7_dXUuW0HbqFrchTnHMqAoM6LVGR014IMQU-vncQ0Ty4dKz0QnJJkHcP4YEky5qUxqChTmJNgM1U1zajjN2dXvzpucaL5uKewin_aW4D01QuT0so0ZuLwaNEaTZyyi9-jqgRlQt3wMWZVOGJabjXc1QkhuWQxtQySIQjw8JBQ0Tv6d4bqON7KSx-GIlycVgVQj9RasCTFT0CBf1SM38Kd-mVRlFHY5VLf61log0VOcHynLwQ-YsiqN4lCwI9trIsdKrRi57eWrcJ5iTOXtfKzD08zwIyAzmB6L4qESNMUQqrOZyQVIkpxMIeL_YatGo6aB4Q.GH_i_WQre771E8Ew.cSsF0qO5nKFsUxNI5D8WIEPRED8gWnnGa9B9nt8obhq8q8LsoiZNqxhwgume1OhEZHifSUIaCOY9TK1GNOa7eFCI5uB95-UHX9fheyFfS1-XlsiEMfVfrseg45T7rVHFuAZW7wz68Nr69dRLcmoEdNrFIkPAw60G79e9DqmeVx5dACI0CQa_ETUgw8uxI5CC_kHfkg5Z8CzwExsHhq3Wr1y2fMkslkikH0LA78b4BW9d_9DMQt68CV3aKnp1Itq5YwDXlLodXAEncclCdr_7nwzbQBAvtJA4qS1GaKCLXAOyPzRLYAmx7QINjdFyhpDJK-ufQXBrgsO5GQzDRhe0ulAYErhhf5EAlS5U-IwMOEzdRu52e8dCo_eAReoDktnnyQprWp1q5M76EbV4poUnMXHCEhaguE2xLwALJHiwvRqiarUYLnOU7A9RHkFVXZWQWLxq__XHcnFLB2BMobZa4BjQp_PCxOdIYxSwniuw437H0Yz44Uh6JmG4t2dlBaQ8_fNWGouSBIo3KxtoetKueiRdgg1cLU3lUKVe5dW1QS-tdVom8F-Z_zqte4186tQJcYluIsqknN6BkhIhKHjwk2J3YAYRhfUA6lhC6FuDHAsuiP7r4UvI0w-3D8j5FLrUnSR0wxyQlqDti-YTz9Yo1Yz42H8J761CSfTeht6h_hi_8Cju1N3ysGBMCTu5Rc5mV75gCP7NDlhCE7DTJYGsujiFdFALg-4sa2QZaOOb9DaT_FWqosxtMcpgLXqwgekpLN11ZLT9w96CzMdCRSqeY69xIqwFRrDU5ib8.tMKrlTY7NxKFA2YtJ2lQow
+Content-Type: application/json
+
+{
+  "code": "385017"
+}
+
+### Login als Nutzer - sollte nicht funktionieren:
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "user.one@bibliobytes.at",
+  "password": "123456"
+}
+
+### Admin erstellen:
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "email": "admin.one@bibliobytes.at",
+  "firstName": "admin",
+  "lastName": "one",
+  "password": "123456"
+}
+
+### Code bestätigen:
+POST http://localhost:8080/users/confirm
+Cookie: register_request_token=eyJraWQiOiJlbmNyeXB0aW9uLWtleSIsImN0eSI6IkpXVCIsImVuYyI6IkExMjhHQ00iLCJhbGciOiJSU0EtT0FFUC0yNTYifQ.e1DpV1w0282b-fwtOQmuWFyslWj7GL9ugQCN0nqDPMi_9odKbps3tzWTbkQfdPMWleSPZqgQTHRjGioo3-m2tL-Lgu_rxc0CfJUndwtT17bcIYmiWyOs9T8kHONeE11P5ga5lyV7zvkzLdqXvNMN4ws03JNDxCH4ADb6b2AGNlCX2JGUuY-VYbl6zFDGg1NA3NQ4sVwO2zhALnEuyaU2QuyHKfFhKvYibmT5JhDkQAFg7GMfLX8-ZIZ54GiRxIRw7AMZ1wjWoNQraeEPPgxRdN3XPT6euQflL_0NH0RnjqFTlllDP2VdDLspXPgHeBYxU8z-ZVh2XDin7poY-3wi8A.iL9eBzhnd62Qpfju.3Hs28adezIW8pkdIOvzSepurlnJBApDbTjCrvSOcl_kkQ_XiC63LmlXhLiK42LTfL3Bg-ATzNfmFxUm0yHyAx3GLA25dzDd8mkzheW_wGz8mVKY50QKqZO0hg7mSwzzS3Ri4lKgtWv11SRN-AeXGccGwtDPSEPvVTKE9sldEl2FB6v-rQcBaCJ8f9CDrU2RxfDtZs0rHAdbcnrN8KMIMgcddZSutSN70uU-D_MZo3BVuel-WuKQJg4DMiAwaxfw_5fOubTK4RCTGI3rO64LlJKRSMm4m0TWFq92-Fm220ZWQjDxh5LKFs7jVf-wZuGwwAQSe4VFBjk7ZhU7U0MDoUHXpJfHfy9pis5mMAgtH6M6oHW4jhuEhjId8xKA1F1K3FIL2lwMCU69er8XGVCIaVdDDxzGCc9EJTNNNnv1Kaar6toY0BOX3QdpghTuL1e4SVloZZMaQMYUs8KZKyyrGQMmBDQmAy9Cdy4nh61HhKWXbvvrExzF6JQ91Ef41eDywmE_FbK1WPqHVYqEDHk8DzUyHFnuN9Bo_LFJekISKVHwSw7J1LmSD42drN8ry_tMK4lsIEPeOGGhFuS_5cf35QMRYcphX-j_dq74DiwniAWfJIW2PTq5KGOc0wYr-X6NvXUulHvdz0BWo_gDCgsdSWPGxp1DjYXbY0iK_3ay4L8wbkzYqbm4pbxXj0eVNsWI8-qrepljHgcw2PGdkgqmFOR6FBLc3rQeshr4ggW8hoYb7-J2jP-n_tvrAACyEstfs_BJtU7kJdUs0bW4eIAcQl28B8P9iOxY_mMV-tI1z.j-E4yIV_fWR-utS4oEC_7w
+Content-Type: application/json
+
+{
+  "code": "089458"
+}
+
+### Login als Admin/Service
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin.one@bibliobytes.at",
+  "password": "123456"
+}
+
+### Als Admin alle Nutzer anzeigen
+GET http://localhost:8080/users
+Authorization: Bearer {{adminAccessToken}}
+
+### Als Admin alle "APPLICANTS" anzeigen
+GET http://localhost:8080/users/applicants
+Authorization: Bearer {{adminAccessToken}}
+
+### Refresh - Token verwenden
+GET http://localhost:8080/auth/refresh
+Cookie: refresh_token={{adminRefreshToken}}
+
+### Als Admin/Service Rolle vergeben:
+PUT http://localhost:8080/users/updateRole
+Authorization: Bearer {{adminAccessToken}}
+Content-Type: application/json
+
+{
+  "id": "cabd58c1-9ee6-43d9-b1e6-ab8efe1e5aba",
+  "role": "USER"
+}
+
+### Login als Nutzer - sollte funktionieren:
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "user.one@bibliobytes.at",
+  "password": "123456"
+}
+
+### Als Nutzer auf eigene Daten zugreifen
+GET http://localhost:8080/auth/me
+Authorization: Bearer {{userAccessToken}}
+
+### Als Nutzer auf alle Nutzer zurgreifen
+GET http://localhost:8080/users
+Authorization: Bearer {{userAccessToken}}

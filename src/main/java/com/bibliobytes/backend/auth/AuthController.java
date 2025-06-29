@@ -8,6 +8,7 @@ import com.bibliobytes.backend.auth.services.JweService;
 import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
+import com.bibliobytes.backend.users.entities.Role;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -34,7 +36,7 @@ public class AuthController {
     private final UserRepository userRepository;
 
     @PostMapping("/login")
-    public ResponseEntity<JweResponse> login(
+    public ResponseEntity<?> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ) throws Exception {
@@ -44,7 +46,18 @@ public class AuthController {
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+        var user = userRepository.findByEmail(request.getEmail()).orElse(null);
+        if (user == null || user.getRole() == Role.EXTERNAL) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("message", "Sie müssen sich zuerst registrieren.")
+            );
+        }
+        if (user.getRole() == Role.APPLICANT) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("message", "Sie müssen noch von einem Admin freigeschaltet werden.")
+            );
+        }
+
         var accessToken = jweService.generateAccessToken(user);
         var refreshToken = jweService.generateRefreshToken(user);
 
@@ -58,7 +71,7 @@ public class AuthController {
         return ResponseEntity.ok(new JweResponse(accessToken.toString()));
     }
 
-    @PostMapping("/refresh")
+    @GetMapping("/refresh")
     public ResponseEntity<JweResponse> refreshToken(
             @CookieValue(value = "refresh_token") String refreshToken // value = "name_des_cookies" vgl. login
     ) throws Exception {
