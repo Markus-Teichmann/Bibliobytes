@@ -4,6 +4,7 @@ import com.bibliobytes.backend.auth.services.Jwe;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
+import jakarta.validation.Valid;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

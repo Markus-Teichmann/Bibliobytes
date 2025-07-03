@@ -1,0 +1,37 @@
+### Registrieren
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "email": "user.one@bibliobytes.at",
+  "firstName": "user",
+  "lastName": "one",
+  "password": "123456"
+}
+
+### Code bestätigen:
+POST http://localhost:8080/users/confirm
+Cookie: confirmable_token={{registerToken}}
+Content-Type: application/json
+
+{
+  "code": {{code}}
+}
+
+### Login
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "user.one@bibliobytes.at",
+  "password": "123456"
+}
+
+### Auf eigene Daten zugreifen
+GET http://localhost:8080/auth/me
+Authorization: Bearer {{accessToken}}
+
+### Vorname ändern
+### Nachname ändern
+### Email ändern
+### Passwort ändern

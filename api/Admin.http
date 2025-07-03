@@ -1,0 +1,56 @@
+### Registrieren
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "email": "admin.one@bibliobytes.at",
+  "firstName": "admin",
+  "lastName": "one",
+  "password": "123456"
+}
+
+### Code bestätigen:
+POST http://localhost:8080/users/confirm
+Cookie: confirmable_token={{registerToken}}
+Content-Type: application/json
+
+{
+  "code": {{code}}
+}
+
+### Login
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin.one@bibliobytes.at",
+  "password": "123456"
+}
+
+### Alle Nutzer anzeigen
+GET http://localhost:8080/users
+Authorization: Bearer {{accessToken}}
+
+### Alle "APPLICANTS" anzeigen
+GET http://localhost:8080/users/applicants
+Authorization: Bearer {{accessToken}}
+
+### Rolle vergeben:
+PUT http://localhost:8080/users/updateRole
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "9e1b0535-077e-4d07-b718-8f3115cbd8d3",
+  "role": "USER"
+}
+
+### Eigenen Vorname ändern
+### Eigenen Nachnamen ändern
+### Eigene Email ändern
+### Eigenes Passwort ändern
+
+### Fremden Vorname ändern
+### Fremden Nachnamen ändern
+### Fremde Email ändern
+### Fremdes Passwort ändern

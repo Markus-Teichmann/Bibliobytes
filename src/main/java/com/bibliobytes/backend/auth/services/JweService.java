@@ -1,7 +1,8 @@
 package com.bibliobytes.backend.auth.services;
 
+import com.bibliobytes.backend.auth.TokenMapper;
 import com.bibliobytes.backend.auth.config.JweConfig;
-import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.email.MailService;
 import com.bibliobytes.backend.users.entities.User;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.RSADecrypter;
@@ -9,15 +10,18 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AllArgsConstructor;
+import org.slf4j.event.KeyValuePair;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class JweService {
+    private TokenMapper tokenMapper;
+    private MailService mailService;
     private JweConfig config;
 
     public Jwe generateRefreshToken(User user) throws Exception {
@@ -43,16 +47,14 @@ public class JweService {
 
     }
 
-    public Jwe generateRegisterRequestToken(RegisterUserRequest request, String verificationCode) throws Exception {
+    public Jwe generateConfirmableToken(String email, Map<String, Object> claims) throws Exception {
+        Map<String, Object> mutableClaims = new HashMap<>(claims);
+        String code = mailService.sendCodeTo(email);
+        mutableClaims.put("code", code);
         return generateToken(
-                request.getEmail(),
-                Map.of(
-                        "firstName", request.getFirstName(),
-                        "lastName", request.getLastName(),
-                        "password", request.getPassword(),
-                        "code", verificationCode
-                ),
-                config.getRegisterRequestTokenExpiration()
+                email,
+                mutableClaims,
+                config.getConfirmableTokenExpiration()
         );
     }
 
@@ -89,5 +91,17 @@ public class JweService {
             System.out.println(e.getMessage());
             return null;
         }
+    }
+
+    public Object confirmedData(String token, String code) {
+        Jwe jwe = parse(token);
+        if (jwe == null || jwe.isExpired()) {
+            return Map.of("message", "Token expired");
+        }
+        if (!code.matches(jwe.get("code", String.class))) {
+            return Map.of("message", "Invalid code");
+        }
+        String type = jwe.get("type", String.class);
+        return TokenMapper.Switch.valueOf(type).create(jwe.getSubject(), jwe.getClaims(), tokenMapper);
     }
 }

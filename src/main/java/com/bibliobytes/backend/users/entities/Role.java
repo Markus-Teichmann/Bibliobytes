@@ -4,6 +4,6 @@ public enum Role {
     EXTERNAL,
     APPLICANT,
     USER,
-    SERVICE,
+    SERVICE, // - Nicht notwendig
     ADMIN
 }

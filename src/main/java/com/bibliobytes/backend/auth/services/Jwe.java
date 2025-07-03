@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 
 import lombok.AllArgsConstructor;
 import java.util.Date;
+import java.util.Map;
 
 @AllArgsConstructor
 public class Jwe {
@@ -31,6 +32,10 @@ public class Jwe {
             return requiredType.cast(value);
         }
         return null;
+    }
+
+    public Map<String, Object> getClaims() {
+        return claims.getClaims();
     }
 
     @SneakyThrows

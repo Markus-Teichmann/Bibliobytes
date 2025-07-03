@@ -1,12 +1,12 @@
 package com.bibliobytes.backend.users.dtos;
 
-import com.bibliobytes.backend.users.entities.Role;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
-public class UpdateRole {
+public class UpdateProfileDto {
     private UUID id;
-    private Role role;
+    private String firstName;
+    private String lastName;
 }

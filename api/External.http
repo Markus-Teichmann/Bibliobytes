@@ -1,0 +1,9 @@
+### Registrieren
+POST http://localhost:8080/users/register
+Content-Type: application/json
+
+{
+  "email": "external.one@bibliobytes.at",
+  "firstName": "external",
+  "lastName": "one"
+}

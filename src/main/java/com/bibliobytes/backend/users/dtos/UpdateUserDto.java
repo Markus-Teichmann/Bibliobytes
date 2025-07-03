@@ -1,0 +1,22 @@
+package com.bibliobytes.backend.users.dtos;
+
+import com.bibliobytes.backend.users.entities.Role;
+import com.bibliobytes.backend.validation.Lowercase;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+
+import java.util.UUID;
+
+@Data
+public class UpdateUserDto {
+    private UUID id;
+    @Email(message = "must be a valid email")
+    @Lowercase(message = "must be in lowercase")
+    private String email;
+    private String firstName;
+    private String lastName;
+    @Size(min = 6, max = 25, message = "Password must be between 6 to 25 characters long.")
+    private String password;
+    private Role role;
+}
