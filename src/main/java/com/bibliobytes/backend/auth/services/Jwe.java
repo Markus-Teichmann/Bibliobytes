@@ -9,6 +9,8 @@ import com.nimbusds.jwt.SignedJWT;
 import lombok.SneakyThrows;
 
 import lombok.AllArgsConstructor;
+
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
 

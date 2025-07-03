@@ -35,7 +35,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateCredentials(UpdateCredentialsDto dto) {
-        var user = userRepository.findById(dto.getId()).orElse(null);
+        var user = findMe();
+        if (dto.getId() != null) {
+            user = userRepository.findById(dto.getId()).orElse(null);
+        }
         if (user != null) {
             user.setEmail(dto.getEmail());
             user.setPassword(dto.getPassword());
@@ -45,7 +48,10 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateProfile(UpdateProfileDto dto) {
-        var user = userRepository.findById(dto.getId()).orElse(null);
+        var user = findMe();
+        if (dto.getId() != null) {
+            user = userRepository.findById(dto.getId()).orElse(null);
+        }
         if (user != null) {
             user.setFirstName(dto.getFirstName());
             user.setLastName(dto.getLastName());

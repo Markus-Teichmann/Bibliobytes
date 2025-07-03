@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -44,12 +45,7 @@ public class UserController {
         }
         if (request.getPassword() != null) {
             // Create Token
-            var confirmableToken = jweService.generateConfirmableToken(user.getEmail(), Map.of(
-                    "firstName", request.getFirstName(),
-                    "lastName", request.getLastName(),
-                    "password", passwordEncoder.encode(request.getPassword()),
-                    "type", RegisterUserRequest.class.getSimpleName()
-            ));
+            var confirmableToken = jweService.generateConfirmableToken(request);
 
             // Place Token in Response
             var cookie = new Cookie("confirmable_token", confirmableToken.toString());
@@ -78,15 +74,16 @@ public class UserController {
         @Valid @RequestBody ConfirmCodeRequest codeRequest,
         @CookieValue(value = "confirmable_token") String token,
         UriComponentsBuilder uriBuilder
-    ) {
+    ) throws IOException, ClassNotFoundException {
         Object data = jweService.confirmedData(token, codeRequest.getCode());
-        if (data == null) {return ResponseEntity.badRequest().build();}
         if (data instanceof Map) {return ResponseEntity.badRequest().body(data);}
         User user = null;
         if (data instanceof RegisterUserRequest request) {
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
             user = userService.registerUser(request);
         }
         if (data instanceof UpdateCredentialsDto request) {
+            request.setPassword(passwordEncoder.encode(request.getPassword()));
             user = userService.updateCredentials(request);
         }
         if (user != null) {
@@ -94,34 +91,6 @@ public class UserController {
             return ResponseEntity.created(uri).body(userMapper.toDto(user));
         }
         return ResponseEntity.internalServerError().build();
-        // Ab hier sind die Daten entschlüsselt, der Code passt und sie wurden validiert,
-        // d.h. ab hier können wir diesen Daten vertrauen ähnlich wäre es, wenn sie aus
-
-//        var jwe = jweService.parse(token);
-//        if (jwe == null || jwe.isExpired()) {
-//            return ResponseEntity.badRequest().body(
-//                    Map.of("message", "Token expired")
-//            );
-//        }
-//        if (!codeRequest.getCode().matches(jwe.get("code", String.class))) {
-//            return ResponseEntity.badRequest().body(
-//                    Map.of("message", "Invalid code")
-//            );
-//        }
-
-
-        //RegisterUserRequest request = tokenMapper.toRegisterUserRequest(jwe.getClaims());
-
-        // @RequestBody @Valid entsprungen wären.
-
-//        var user = userRepository.findByEmail(request.getEmail()).orElse(null);
-//        if (user == null) {
-//            user = userMapper.toEntity(request);
-//        }
-//        user.setPassword(passwordEncoder.encode(request.getPassword()));
-//        userRepository.save(user);
-//        var uri = uriBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
-//        return ResponseEntity.created(uri).body(userMapper.toDto(user));
     }
 
     @GetMapping("/{id}")
@@ -150,41 +119,52 @@ public class UserController {
             // Wird nie passieren
             return ResponseEntity.internalServerError().build();
         }
-        if (user.getRole() == Role.ADMIN && request.getId() != null) {
+        if (user.getRole() != Role.ADMIN && request.getId() != null) {
+            return ResponseEntity.badRequest().build();
+        }
+        if (user.getRole() == Role.ADMIN && request.getPassword() != null) {
             user = userService.updateCredentials(request);
             if (user == null) {
                 return ResponseEntity.notFound().build();
             } else {
                 return ResponseEntity.ok(userMapper.toDto(user));
             }
-        } else {
-            var confirmableToken = jweService.generateConfirmableToken(request.getEmail(), Map.of(
-                    "id", request.getId(),
-                    "password", passwordEncoder.encode(request.getPassword())
-            ));
-            // Place Token in Response
-            var cookie = new Cookie("confirmable_token", confirmableToken.toString());
-            cookie.setHttpOnly(true);
-            cookie.setPath("/users");
-            cookie.setMaxAge((int) jweConfig.getConfirmableTokenExpiration());
-            cookie.setSecure(true);
-            response.addCookie(cookie);
-
-            return ResponseEntity.ok().body(
-                    Map.of(
-                            "token", confirmableToken.toString(),
-                            "message", "Wir haben Ihnen eine Email mit einem Bestätigungscode and ihre Emailadresse " +
-                                    user.getEmail() + " geschickt."
-                    )
-            );
         }
+
+        // Generate Token
+        var confirmableToken = jweService.generateConfirmableToken(request);
+
+        // Place Token in Response
+        var cookie = new Cookie("confirmable_token", confirmableToken.toString());
+        cookie.setHttpOnly(true);
+        cookie.setPath("/users");
+        cookie.setMaxAge((int) jweConfig.getConfirmableTokenExpiration());
+        cookie.setSecure(true);
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok().body(
+                Map.of(
+                        "token", confirmableToken.toString(),
+                        "message", "Wir haben Ihnen eine Email mit einem Bestätigungscode and ihre Emailadresse " +
+                                user.getEmail() + " geschickt."
+                )
+        );
     }
 
     @PutMapping("/updateProfile")
     public ResponseEntity<UserDto> updateProfile(
             @Valid @RequestBody UpdateProfileDto request
     ) {
-        return null;
+        var user = userService.findMe();
+        if (user == null) {
+            // Wird nie passieren
+            return ResponseEntity.internalServerError().build();
+        }
+        if (user.getRole() != Role.ADMIN && request.getId() != null) {
+            return ResponseEntity.badRequest().build();
+        }
+        user = userService.updateProfile(request);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @PutMapping("/updateRole")
@@ -203,11 +183,13 @@ public class UserController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteUser() {
         var user = userService.findMe();
-        return null;
+        user.setRole(Role.EXTERNAL);
+        userRepository.save(user);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping()
-    public Map<String, List<UserDto>> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<Map<String, List<UserDto>>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 }

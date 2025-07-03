@@ -5,10 +5,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Data
-public class UpdateCredentialsDto {
+public class UpdateCredentialsDto implements Confirmable {
     private UUID id;
     @Email(message = "must be a valid email")
     @Lowercase(message = "must be in lowercase")

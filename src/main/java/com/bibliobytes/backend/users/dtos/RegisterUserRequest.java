@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class RegisterUserRequest {
+public class RegisterUserRequest implements Confirmable {
     @NotBlank(message = "email is required")
     @Email(message = "must be a valid email")
     @Lowercase(message = "must be in lowercase")

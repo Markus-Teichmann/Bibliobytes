@@ -1,8 +1,8 @@
 package com.bibliobytes.backend.auth.services;
 
-import com.bibliobytes.backend.auth.TokenMapper;
 import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.email.MailService;
+import com.bibliobytes.backend.users.dtos.Confirmable;
 import com.bibliobytes.backend.users.entities.User;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.RSADecrypter;
@@ -10,17 +10,16 @@ import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AllArgsConstructor;
-import org.slf4j.event.KeyValuePair;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class JweService {
-    private TokenMapper tokenMapper;
     private MailService mailService;
     private JweConfig config;
 
@@ -39,21 +38,23 @@ public class JweService {
     public Jwe generateAccessToken(User user) throws Exception {
         return generateToken(
                 user.getId().toString(),
-                Map.of(
-                        "role", user.getRole()
-                ),
+                Map.of("role", user.getRole()),
                 config.getAccessTokenExpiration()
         );
-
     }
 
-    public Jwe generateConfirmableToken(String email, Map<String, Object> claims) throws Exception {
-        Map<String, Object> mutableClaims = new HashMap<>(claims);
-        String code = mailService.sendCodeTo(email);
-        mutableClaims.put("code", code);
+    public Jwe generateConfirmableToken(Confirmable obj) throws Exception {
+        String code = mailService.sendCodeTo(obj.getEmail());
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream( baos );
+        oos.writeObject( obj );
+        oos.close();
         return generateToken(
-                email,
-                mutableClaims,
+                obj.getEmail(),
+                Map.of(
+                        "code", code,
+                        "obj", Base64.getEncoder().encodeToString(baos.toByteArray())
+                ),
                 config.getConfirmableTokenExpiration()
         );
     }
@@ -93,7 +94,7 @@ public class JweService {
         }
     }
 
-    public Object confirmedData(String token, String code) {
+    public Object confirmedData(String token, String code) throws IOException, ClassNotFoundException {
         Jwe jwe = parse(token);
         if (jwe == null || jwe.isExpired()) {
             return Map.of("message", "Token expired");
@@ -101,7 +102,11 @@ public class JweService {
         if (!code.matches(jwe.get("code", String.class))) {
             return Map.of("message", "Invalid code");
         }
-        String type = jwe.get("type", String.class);
-        return TokenMapper.Switch.valueOf(type).create(jwe.getSubject(), jwe.getClaims(), tokenMapper);
+        String string = jwe.get("obj", String.class);
+        byte[] data = Base64.getDecoder().decode(string);
+        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+        Object obj  = ois.readObject();
+        ois.close();
+        return obj;
     }
 }

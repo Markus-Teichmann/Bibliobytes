@@ -41,7 +41,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "id": "9e1b0535-077e-4d07-b718-8f3115cbd8d3",
+  "id": "fdf46deb-8ccb-49c0-ad5d-9c15cbe7139a",
   "role": "USER"
 }
 
