@@ -1,7 +1,7 @@
 package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
-import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
+import com.bibliobytes.backend.users.dtos.confirmable.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.confirmable.UpdateCredentialsDto;
 import com.bibliobytes.backend.users.dtos.UpdateProfileDto;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.Role;
@@ -11,7 +11,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 

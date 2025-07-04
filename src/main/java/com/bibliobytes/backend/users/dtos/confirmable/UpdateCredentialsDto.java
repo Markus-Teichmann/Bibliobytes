@@ -1,11 +1,10 @@
-package com.bibliobytes.backend.users.dtos;
+package com.bibliobytes.backend.users.dtos.confirmable;
 
 import com.bibliobytes.backend.validation.Lowercase;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.util.Map;
 import java.util.UUID;
 
 @Data

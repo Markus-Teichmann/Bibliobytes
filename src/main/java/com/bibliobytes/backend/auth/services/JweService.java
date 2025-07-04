@@ -2,8 +2,9 @@ package com.bibliobytes.backend.auth.services;
 
 import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.email.MailService;
-import com.bibliobytes.backend.users.dtos.Confirmable;
-import com.bibliobytes.backend.users.entities.User;
+import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
+import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
+import com.bibliobytes.backend.users.dtos.confirmable.Confirmable;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -23,50 +24,50 @@ public class JweService {
     private MailService mailService;
     private JweConfig config;
 
-    public Jwe generateRefreshToken(User user) throws Exception {
+    public Jwe generateRefreshToken(RefreshTokenDto dto) throws Exception {
         return generateToken(
-                user.getId().toString(),
-                Map.of(
-                        "email", user.getEmail(),
-                        "firstName", user.getFirstName(),
-                        "lastName", user.getLastName()
-                ),
+                dto.getId().toString(),
+                Map.of("dto", dto),
                 config.getRefreshTokenExpiration()
         );
     }
 
-    public Jwe generateAccessToken(User user) throws Exception {
+    public Jwe generateAccessToken(AccessTokenDto dto) throws Exception {
         return generateToken(
-                user.getId().toString(),
-                Map.of("role", user.getRole().name()),
+                dto.getId().toString(),
+                Map.of("dto", dto),
                 config.getAccessTokenExpiration()
         );
     }
 
-    public Jwe generateConfirmableToken(Confirmable obj) throws Exception {
-        String code = mailService.sendCodeTo(obj.getEmail());
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream oos = new ObjectOutputStream( baos );
-        oos.writeObject( obj );
-        oos.close();
+    public Jwe generateConfirmableToken(Confirmable dto) throws Exception {
+        String code = mailService.sendCodeTo(dto.getEmail());
         return generateToken(
-                obj.getEmail(),
+                dto.getEmail(),
                 Map.of(
                         "code", code,
-                        "data", Base64.getEncoder().encodeToString(baos.toByteArray())
+                        "dto", dto
                 ),
                 config.getConfirmableTokenExpiration()
         );
     }
 
-    private Jwe generateToken(String subject, Map<String, String> claims, long expiration) throws Exception {
+    private Jwe generateToken(String subject, Map<String, Object> claims, long expiration) throws Exception {
         var claimSetBuilder = new JWTClaimsSet.Builder()
             .subject(subject)
             .issuer(config.getIssuer())
             .issueTime(new Date())
             .expirationTime(new Date(System.currentTimeMillis() + 1000 * expiration));
-        for (Map.Entry<String, String> claimEntry : claims.entrySet()) {
-            claimSetBuilder.claim(claimEntry.getKey(), claimEntry.getValue());
+        for (Map.Entry<String, Object> claimEntry : claims.entrySet()) {
+            if (claimEntry.getValue() instanceof String value) {
+                claimSetBuilder.claim(claimEntry.getKey(), value);
+            } else {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(claimEntry.getValue());
+                oos.close();
+                claimSetBuilder.claim(claimEntry.getKey(), Base64.getEncoder().encodeToString(baos.toByteArray()));
+            }
         }
         return new Jwe(
                 claimSetBuilder.build(),

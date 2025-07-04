@@ -19,6 +19,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -34,6 +35,7 @@ public class AuthController {
     private final JweConfig config;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
+    private final TokenMapper tokenMapper;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
@@ -58,8 +60,8 @@ public class AuthController {
             );
         }
 
-        var accessToken = jweService.generateAccessToken(user);
-        var refreshToken = jweService.generateRefreshToken(user);
+        var accessToken = jweService.generateAccessToken(tokenMapper.toAccessTokenDto(user));
+        var refreshToken = jweService.generateRefreshToken(tokenMapper.toRefreshTokenDto(user));
 
         var cookie = new Cookie("refresh_token", refreshToken.toString());
         cookie.setHttpOnly(true);
@@ -81,7 +83,7 @@ public class AuthController {
         }
 
         var user = userRepository.findById(UUID.fromString(jwe.getSubject())).orElseThrow();
-        var accessToken = jweService.generateAccessToken(user);
+        var accessToken = jweService.generateAccessToken(tokenMapper.toAccessTokenDto(user));
 
         return ResponseEntity.ok(new JweResponse(accessToken.toString()));
     }

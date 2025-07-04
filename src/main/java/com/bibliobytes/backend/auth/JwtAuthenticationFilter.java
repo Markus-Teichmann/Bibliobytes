@@ -1,5 +1,6 @@
 package com.bibliobytes.backend.auth;
 
+import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.auth.services.JweService;
 import jakarta.servlet.FilterChain;
@@ -34,18 +35,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Token abgelaufen oder nicht angegeben.
         var token = authHeader.replace("Bearer ", "");
 
-        var jwt = jweService.parse(token);
+        var jwe = jweService.parse(token);
 
-        if (jwt == null || jwt.isExpired()) {
+        if (jwe == null || jwe.isExpired()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        AccessTokenDto dto = jwe.get("dto", AccessTokenDto.class);
+        if (dto == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // Authentication setzen.
         var authentication = new UsernamePasswordAuthenticationToken(
-                jwt.getSubject(),
+                dto.getId().toString(),
                 null,
-                List.of(new SimpleGrantedAuthority("ROLE_" + jwt.get("role", String.class)))
+                List.of(new SimpleGrantedAuthority("ROLE_" + dto.getRole().name()))
         );
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)

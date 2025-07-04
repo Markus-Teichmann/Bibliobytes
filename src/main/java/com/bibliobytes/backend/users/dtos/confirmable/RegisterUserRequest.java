@@ -1,12 +1,10 @@
-package com.bibliobytes.backend.users.dtos;
+package com.bibliobytes.backend.users.dtos.confirmable;
 
 import com.bibliobytes.backend.validation.Lowercase;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
-import java.io.Serializable;
 
 @Data
 public class RegisterUserRequest implements Confirmable {

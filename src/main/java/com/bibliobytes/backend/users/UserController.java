@@ -3,6 +3,8 @@ package com.bibliobytes.backend.users;
 import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.auth.services.Jwe;
 import com.bibliobytes.backend.users.dtos.*;
+import com.bibliobytes.backend.users.dtos.confirmable.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.confirmable.UpdateCredentialsDto;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.auth.services.JweService;
 import com.bibliobytes.backend.users.entities.User;
@@ -84,11 +86,11 @@ public class UserController {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid code"));
         }
         User user = null;
-        if(jwe.get("data", RegisterUserRequest.class) instanceof RegisterUserRequest request) {
+        if(jwe.get("dto", RegisterUserRequest.class) instanceof RegisterUserRequest request) {
             request.setPassword(passwordEncoder.encode(request.getPassword()));
             user = userService.registerUser(request);
         }
-        if (jwe.get("data", UpdateCredentialsDto.class) instanceof UpdateCredentialsDto dto) {
+        if (jwe.get("dto", UpdateCredentialsDto.class) instanceof UpdateCredentialsDto dto) {
             dto.setPassword(passwordEncoder.encode(dto.getPassword()));
             user = userService.updateCredentials(dto);
         }

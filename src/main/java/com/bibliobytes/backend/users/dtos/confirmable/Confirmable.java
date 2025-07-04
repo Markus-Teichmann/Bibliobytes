@@ -1,7 +1,6 @@
-package com.bibliobytes.backend.users.dtos;
+package com.bibliobytes.backend.users.dtos.confirmable;
 
 import java.io.Serializable;
-import java.util.Map;
 
 public interface Confirmable extends Serializable {
     String getEmail();
