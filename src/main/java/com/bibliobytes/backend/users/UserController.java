@@ -1,6 +1,7 @@
 package com.bibliobytes.backend.users;
 
 import com.bibliobytes.backend.auth.config.JweConfig;
+import com.bibliobytes.backend.auth.services.Jwe;
 import com.bibliobytes.backend.users.dtos.*;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.auth.services.JweService;
@@ -75,16 +76,21 @@ public class UserController {
         @CookieValue(value = "confirmable_token") String token,
         UriComponentsBuilder uriBuilder
     ) throws IOException, ClassNotFoundException {
-        Object data = jweService.confirmedData(token, codeRequest.getCode());
-        if (data instanceof Map) {return ResponseEntity.badRequest().body(data);}
+        Jwe jwe = jweService.parse(token);
+        if (jwe == null || jwe.isExpired()) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Token expired"));
+        }
+        if (!codeRequest.getCode().matches(jwe.get("code", String.class))) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Invalid code"));
+        }
         User user = null;
-        if (data instanceof RegisterUserRequest request) {
+        if(jwe.get("data", RegisterUserRequest.class) instanceof RegisterUserRequest request) {
             request.setPassword(passwordEncoder.encode(request.getPassword()));
             user = userService.registerUser(request);
         }
-        if (data instanceof UpdateCredentialsDto request) {
-            request.setPassword(passwordEncoder.encode(request.getPassword()));
-            user = userService.updateCredentials(request);
+        if (jwe.get("data", UpdateCredentialsDto.class) instanceof UpdateCredentialsDto dto) {
+            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            user = userService.updateCredentials(dto);
         }
         if (user != null) {
             var uri = uriBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();

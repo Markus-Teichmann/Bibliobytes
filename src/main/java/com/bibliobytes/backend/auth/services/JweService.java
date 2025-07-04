@@ -38,7 +38,7 @@ public class JweService {
     public Jwe generateAccessToken(User user) throws Exception {
         return generateToken(
                 user.getId().toString(),
-                Map.of("role", user.getRole()),
+                Map.of("role", user.getRole().name()),
                 config.getAccessTokenExpiration()
         );
     }
@@ -53,19 +53,19 @@ public class JweService {
                 obj.getEmail(),
                 Map.of(
                         "code", code,
-                        "obj", Base64.getEncoder().encodeToString(baos.toByteArray())
+                        "data", Base64.getEncoder().encodeToString(baos.toByteArray())
                 ),
                 config.getConfirmableTokenExpiration()
         );
     }
 
-    private Jwe generateToken(String subject, Map<String, Object> claims, long expiration) throws Exception {
+    private Jwe generateToken(String subject, Map<String, String> claims, long expiration) throws Exception {
         var claimSetBuilder = new JWTClaimsSet.Builder()
             .subject(subject)
             .issuer(config.getIssuer())
             .issueTime(new Date())
             .expirationTime(new Date(System.currentTimeMillis() + 1000 * expiration));
-        for (Map.Entry<String, Object> claimEntry : claims.entrySet()) {
+        for (Map.Entry<String, String> claimEntry : claims.entrySet()) {
             claimSetBuilder.claim(claimEntry.getKey(), claimEntry.getValue());
         }
         return new Jwe(
@@ -92,21 +92,5 @@ public class JweService {
             System.out.println(e.getMessage());
             return null;
         }
-    }
-
-    public Object confirmedData(String token, String code) throws IOException, ClassNotFoundException {
-        Jwe jwe = parse(token);
-        if (jwe == null || jwe.isExpired()) {
-            return Map.of("message", "Token expired");
-        }
-        if (!code.matches(jwe.get("code", String.class))) {
-            return Map.of("message", "Invalid code");
-        }
-        String string = jwe.get("obj", String.class);
-        byte[] data = Base64.getDecoder().decode(string);
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-        Object obj  = ois.readObject();
-        ois.close();
-        return obj;
     }
 }

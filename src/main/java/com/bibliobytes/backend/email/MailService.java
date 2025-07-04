@@ -24,8 +24,9 @@ public class MailService {
     }
 
     public String sendCodeTo(String address) {
+        // ToDo Better Eliminate Leading Zeros
         // Generate Random Code
-        IntStream stream = new Random().ints(6L, 0, 10);
+        IntStream stream = new Random().ints(6L, 1, 10);
         String code = Arrays.toString(stream.toArray());
         code = code.replaceAll("[^0-9]", "");
 

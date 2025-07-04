@@ -10,9 +10,11 @@ import lombok.SneakyThrows;
 
 import lombok.AllArgsConstructor;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Map;
 
 @AllArgsConstructor
 public class Jwe {
@@ -30,14 +32,20 @@ public class Jwe {
 
     public <T> T get(String name, Class<T> requiredType) {
         Object value = claims.getClaim(name);
+        if (!requiredType.isInstance(String.class) && value instanceof String string) {
+            try {
+                byte[] data = Base64.getDecoder().decode(string);
+                ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+                value  = ois.readObject();
+                ois.close();
+            } catch (Exception ignored) {
+                //ToDo Better Exception handling.
+            }
+        }
         if (requiredType.isInstance(value)) {
             return requiredType.cast(value);
         }
         return null;
-    }
-
-    public Map<String, Object> getClaims() {
-        return claims.getClaims();
     }
 
     @SneakyThrows
