@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,"/users/updatePassword").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/updateFirstName").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/updateLastName").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.DELETE,"/users").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/users").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST,"/auth/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/auth/refresh").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/auth/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())

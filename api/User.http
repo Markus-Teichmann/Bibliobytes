@@ -32,6 +32,65 @@ GET http://localhost:8080/auth/me
 Authorization: Bearer {{accessToken}}
 
 ### Vorname ändern
+PUT http://localhost:8080/users/updateProfile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "firstName": "test"
+}
+
 ### Nachname ändern
+PUT http://localhost:8080/users/updateProfile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "lastName": "test"
+}
+
 ### Email ändern
+PUT http://localhost:8080/users/updateCredentials
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "user.one@bibliobytes.at",
+  "password": "123456",
+  "newEmail": "test.one@bibliobytes.at",
+  "confirmNewEmail": "test.one@bibliobytes.at"
+}
+
+### Code bestätigen
+POST http://localhost:8080/users/confirm
+Cookie: confirmable_token={{updateEmailToken}}
+Content-Type: application/json
+
+{
+  "code": {{code}}
+}
+
 ### Passwort ändern
+PUT http://localhost:8080/users/updateCredentials
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "test.one@bibliobytes.at",
+  "password": "123456",
+  "newPassword": "654321",
+  "confirmNewPassword": "654321"
+}
+
+### Code bestätigen
+POST http://localhost:8080/users/confirm
+Cookie: confirmable_token={{updatePasswordToken}}
+Content-Type: application/json
+
+{
+  "code": {{code}}
+}
+
+### Delte Me
+DELETE http://localhost:8080/users
+Authorization: Bearer {{accessToken}}

@@ -13,10 +13,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.management.remote.JMXAuthenticator;
 import java.io.IOException;
 import java.util.*;
 
@@ -30,6 +33,7 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(
@@ -77,7 +81,7 @@ public class UserController {
         @Valid @RequestBody ConfirmCodeRequest codeRequest,
         @CookieValue(value = "confirmable_token") String token,
         UriComponentsBuilder uriBuilder
-    ) throws IOException, ClassNotFoundException {
+    ) {
         Jwe jwe = jweService.parse(token);
         if (jwe == null || jwe.isExpired()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Token expired"));
@@ -91,7 +95,9 @@ public class UserController {
             user = userService.registerUser(request);
         }
         if (jwe.get("dto", UpdateCredentialsDto.class) instanceof UpdateCredentialsDto dto) {
-            dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+            if (dto.getNewPassword() != null) {
+                dto.setNewPassword(passwordEncoder.encode(dto.getNewPassword()));
+            }
             user = userService.updateCredentials(dto);
         }
         if (user != null) {
@@ -130,13 +136,38 @@ public class UserController {
         if (user.getRole() != Role.ADMIN && request.getId() != null) {
             return ResponseEntity.badRequest().build();
         }
-        if (user.getRole() == Role.ADMIN && request.getPassword() != null) {
+        if (user.getRole() == Role.ADMIN && request.getId() != null) {
+            if (request.getNewPassword() != null) {
+                request.setNewPassword(passwordEncoder.encode(request.getNewPassword()));
+            }
             user = userService.updateCredentials(request);
             if (user == null) {
                 return ResponseEntity.notFound().build();
             } else {
                 return ResponseEntity.ok(userMapper.toDto(user));
             }
+        }
+
+        if (request.getEmail() == null || request.getPassword() == null) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "Email and Password are required"
+            ));
+        }
+
+        // Angegebene Daten authentifizieren
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        if(request.getNewPassword() != null && !request.getNewPassword().matches(request.getConfirmNewPassword())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Passwords do not match"));
+        }
+
+        if(request.getNewEmail() != null && !request.getNewEmail().matches(request.getConfirmNewEmail())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Emails do not match"));
         }
 
         // Generate Token
@@ -176,12 +207,19 @@ public class UserController {
     }
 
     @PutMapping("/updateRole")
-    public ResponseEntity<UserDto> updateRole(
+    public ResponseEntity<?> updateRole(
         @Valid @RequestBody UpdateRole request
     ) {
         var user = userRepository.findById(request.getId()).orElse(null);
         if (user == null) {
             return ResponseEntity.notFound().build();
+        }
+        if (user.getPassword() == null && request.getRole() != Role.EXTERNAL) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "message", "Nutzer ohne Passwort können die Rolle "
+                            + request.getRole().name()
+                            + " nicht einnehmen.")
+            );
         }
         user.setRole(request.getRole());
         userRepository.save(user);
@@ -189,11 +227,19 @@ public class UserController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<Void> deleteUser() {
+    public ResponseEntity<UserDto> deleteUser(
+            @RequestBody(required = false) DelteUserRequest request
+    ) {
         var user = userService.findMe();
+        if (request != null && user.getRole() == Role.ADMIN && request.getId() != null) {
+            user = userRepository.findById(request.getId()).orElse(null);
+        }
+        if (user == null || (request != null && user.getRole() != Role.ADMIN && request.getId() != null)) {
+            return ResponseEntity.badRequest().build();
+        }
         user.setRole(Role.EXTERNAL);
         userRepository.save(user);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(userMapper.toDto(user));
     }
 
     @GetMapping()

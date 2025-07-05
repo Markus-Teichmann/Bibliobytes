@@ -51,6 +51,41 @@ Content-Type: application/json
 ### Eigenes Passwort ändern
 
 ### Fremden Vorname ändern
-### Fremden Nachnamen ändern
+PUT http://localhost:8080/users/updateProfile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "firstName": "user"
+}
+
+### Fremden Nachname ändern
+PUT http://localhost:8080/users/updateProfile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "lastName": "one"
+}
+
 ### Fremde Email ändern
+PUT http://localhost:8080/users/updateCredentials
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "newEmail": "user.one@bibliobytes.at"
+}
+
 ### Fremdes Passwort ändern
+PUT http://localhost:8080/users/updateCredentials
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "newPassword": "123456"
+}

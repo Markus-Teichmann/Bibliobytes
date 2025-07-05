@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.*;
+import java.util.function.Supplier;
 
 @AllArgsConstructor
 @Service
@@ -34,15 +35,20 @@ public class UserService implements UserDetailsService {
     }
 
     public User updateCredentials(UpdateCredentialsDto dto) {
-        var user = findMe();
-        if (dto.getId() != null) {
-            user = userRepository.findById(dto.getId()).orElse(null);
+        User user = null;
+        if (dto.getId() == null) {
+            user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
+        } else {
+            user = userRepository.findById(dto.getId()).orElseThrow();
         }
-        if (user != null) {
-            user.setEmail(dto.getEmail());
-            user.setPassword(dto.getPassword());
-            userRepository.save(user);
+        if (dto.getNewEmail() != null) {
+            user.setEmail(dto.getNewEmail());
         }
+        if (dto.getNewPassword() != null) {
+            user.setPassword(dto.getNewPassword());
+        }
+        userRepository.save(user);
+
         return user;
     }
 
@@ -52,8 +58,12 @@ public class UserService implements UserDetailsService {
             user = userRepository.findById(dto.getId()).orElse(null);
         }
         if (user != null) {
-            user.setFirstName(dto.getFirstName());
-            user.setLastName(dto.getLastName());
+            if (dto.getFirstName() != null) {
+                user.setFirstName(dto.getFirstName());
+            }
+            if (dto.getLastName() != null) {
+                user.setLastName(dto.getLastName());
+            }
             userRepository.save(user);
         }
         return user;

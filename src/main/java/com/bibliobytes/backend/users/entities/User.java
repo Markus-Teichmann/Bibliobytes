@@ -48,7 +48,9 @@ public class User {
     public void setRole(Role role) {
         if (role == Role.EXTERNAL) {
             password = null;
+            this.role = role;
+        } else if (password != null) { // Dieser Code ist in dem Fall wichtig, wenn ich einen Nutzer ohne passwort habe, gerade eine Rolle vergeben wird.
+            this.role = role;
         }
-        this.role = role;
     }
 }
