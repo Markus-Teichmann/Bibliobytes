@@ -4,7 +4,8 @@ import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.email.MailService;
 import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
 import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
-import com.bibliobytes.backend.users.dtos.confirmable.Confirmable;
+import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -27,7 +28,10 @@ public class JweService {
     public Jwe generateRefreshToken(RefreshTokenDto dto) throws Exception {
         return generateToken(
                 dto.getId().toString(),
-                Map.of("dto", dto),
+                Map.of(
+                        "dto", dto,
+                        "dtoClassName", dto.getClass().getName()
+                ),
                 config.getRefreshTokenExpiration()
         );
     }
@@ -35,21 +39,43 @@ public class JweService {
     public Jwe generateAccessToken(AccessTokenDto dto) throws Exception {
         return generateToken(
                 dto.getId().toString(),
-                Map.of("dto", dto),
+                Map.of(
+                        "dto", dto,
+                        "dtoClassName", dto.getClass().getName()
+                ),
                 config.getAccessTokenExpiration()
         );
     }
 
-    public Jwe generateConfirmableToken(Confirmable dto) throws Exception {
+    public Jwe generateRegisterUserToken(RegisterUserRequest dto) throws Exception {
         String code = mailService.sendCodeTo(dto.getEmail());
         return generateToken(
                 dto.getEmail(),
                 Map.of(
                         "code", code,
-                        "dto", dto
+                        "dto", dto,
+                        "dtoClassName", dto.getClass().getName()
                 ),
-                config.getConfirmableTokenExpiration()
+                config.getRegisterUserTokenExpiration()
         );
+
+    }
+
+    public Jwe generateUpdateUserCredentialsToken(UpdateCredentialsDto dto) throws Exception {
+        String code = mailService.sendCodeTo(dto.getOldEmail());
+        if (dto.getNewEmail() != null) {
+            code += mailService.sendCodeTo(dto.getNewEmail());
+        }
+        return generateToken(
+                dto.getOldEmail(),
+                Map.of(
+                        "code", code,
+                        "dto", dto,
+                        "dtoClassName", dto.getClass().getName()
+                ),
+                config.getUpdateUserCredentialsTokenExpiration()
+        );
+
     }
 
     private Jwe generateToken(String subject, Map<String, Object> claims, long expiration) throws Exception {
@@ -62,11 +88,7 @@ public class JweService {
             if (claimEntry.getValue() instanceof String value) {
                 claimSetBuilder.claim(claimEntry.getKey(), value);
             } else {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(claimEntry.getValue());
-                oos.close();
-                claimSetBuilder.claim(claimEntry.getKey(), Base64.getEncoder().encodeToString(baos.toByteArray()));
+                claimSetBuilder.claim(claimEntry.getKey(), serialise(claimEntry.getValue()));
             }
         }
         return new Jwe(
@@ -74,6 +96,14 @@ public class JweService {
                 config.signingKey(),
                 config.encryptionKey()
         );
+    }
+
+    private String serialise(Object dto) throws IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(dto);
+        oos.close();
+        return Base64.getEncoder().encodeToString(baos.toByteArray());
     }
 
     public Jwe parse(String token) {

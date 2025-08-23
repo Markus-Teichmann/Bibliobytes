@@ -1,5 +1,9 @@
 package com.bibliobytes.backend.auth.services;
 
+import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
+import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
+import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;
@@ -11,7 +15,6 @@ import lombok.SneakyThrows;
 import lombok.AllArgsConstructor;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Base64;
 import java.util.Date;
@@ -30,20 +33,43 @@ public class Jwe {
         return claims.getSubject();
     }
 
-    public <T> T get(String name, Class<T> requiredType) {
-        Object value = claims.getClaim(name);
-        if (!requiredType.isInstance(String.class) && value instanceof String string) {
-            try {
-                byte[] data = Base64.getDecoder().decode(string);
-                ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
-                value  = ois.readObject();
-                ois.close();
-            } catch (Exception ignored) {
-                //ToDo Better Exception handling.
-            }
+    public String getCode() {
+        return (String) claims.getClaim("code");
+    }
+
+    public <T> T toDto() {
+        Class<T> type = (Class<T>) getDtoClass();
+        Object deserializedDto = deserialize();
+        if (!type.isInstance(deserializedDto)) {
+            return null;
         }
-        if (requiredType.isInstance(value)) {
-            return requiredType.cast(value);
+        return type.cast(deserializedDto);
+    }
+
+    private Class<?> getDtoClass() {
+        String className = (String) claims.getClaim("dtoClassName");
+        Class<?> type = null;
+        try {
+            type = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class not found: " + className);
+        }
+        return type;
+    }
+
+    private Object deserialize() {
+        Object serializedDto = claims.getClaim("dto");
+        if (!(serializedDto instanceof String)) {
+            return null;
+        }
+        byte[] data = Base64.getDecoder().decode(serializedDto.toString());
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(data));
+            Object obj = ois.readObject();
+            ois.close();
+            return obj;
+        } catch (Exception e) {
+            System.out.println("Error while deserializing token");
         }
         return null;
     }

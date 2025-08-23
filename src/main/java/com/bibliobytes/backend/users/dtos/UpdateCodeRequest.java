@@ -1,0 +1,17 @@
+package com.bibliobytes.backend.users.dtos;
+
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+
+@Data
+public class UpdateCodeRequest {
+    @NotBlank(message = "code is required")
+    @Size(min = 6, max = 6, message = "Code must be 6 digits long.")
+    @Digits(message = "Code must contain digits.", integer = 6, fraction = 0)
+    private String codeFromOldEmail;
+    @Size(min = 6, max = 6, message = "Code must be 6 digits long.")
+    @Digits(message = "Code must contain digits.", integer = 6, fraction = 0)
+    private String codeFromNewEmail;
+}

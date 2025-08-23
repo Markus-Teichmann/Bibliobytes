@@ -1,7 +1,7 @@
 package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.users.dtos.confirmable.RegisterUserRequest;
-import com.bibliobytes.backend.users.dtos.confirmable.UpdateCredentialsDto;
+import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
 import com.bibliobytes.backend.users.dtos.UpdateProfileDto;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.Role;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.*;
-import java.util.function.Supplier;
 
 @AllArgsConstructor
 @Service
@@ -37,7 +36,7 @@ public class UserService implements UserDetailsService {
     public User updateCredentials(UpdateCredentialsDto dto) {
         User user = null;
         if (dto.getId() == null) {
-            user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
+            user = userRepository.findByEmail(dto.getOldEmail()).orElseThrow();
         } else {
             user = userRepository.findById(dto.getId()).orElseThrow();
         }

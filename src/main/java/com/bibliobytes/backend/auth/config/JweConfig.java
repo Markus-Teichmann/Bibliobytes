@@ -33,7 +33,8 @@ public class JweConfig {
     }
 
     private String issuer;
-    private long confirmableTokenExpiration;
+    private long registerUserTokenExpiration;
+    private long updateUserCredentialsTokenExpiration;
     private long refreshTokenExpiration;
     private long accessTokenExpiration;
 

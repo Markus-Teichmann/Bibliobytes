@@ -42,7 +42,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        AccessTokenDto dto = jwe.get("dto", AccessTokenDto.class);
+        AccessTokenDto dto = jwe.toDto();
         if (dto == null) {
             filterChain.doFilter(request, response);
             return;
