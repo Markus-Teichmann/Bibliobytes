@@ -177,6 +177,7 @@ public class UserController {
             @Valid @RequestBody UpdateCodeRequest codeRequest,
             @CookieValue(value = "update_credentials_token") String token
     ) {
+        System.out.println("Test");
         Jwe jwe = jweService.parse(token);
         if (jwe == null || jwe.isExpired()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Token expired"));

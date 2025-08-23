@@ -10,8 +10,8 @@ Content-Type: application/json
 }
 
 ### Code bestätigen:
-POST http://localhost:8080/users/confirm
-Cookie: confirmable_token={{registerToken}}
+POST http://localhost:8080/users/register/confirm
+Cookie: register_token={{registerToken}}
 Content-Type: application/json
 
 {
@@ -41,7 +41,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "id": "1d9a3871-7c96-43bf-a33d-72b62a2a91d7",
   "role": "USER"
 }
 
@@ -56,7 +56,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "id": "1d9a3871-7c96-43bf-a33d-72b62a2a91d7",
   "firstName": "user"
 }
 
@@ -66,7 +66,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "id": "1d9a3871-7c96-43bf-a33d-72b62a2a91d7",
   "lastName": "one"
 }
 
@@ -76,7 +76,7 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "id": "1d9a3871-7c96-43bf-a33d-72b62a2a91d7",
   "newEmail": "user.one@bibliobytes.at"
 }
 
@@ -86,6 +86,6 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "id": "e75fd011-66a5-4a23-9bf6-91a266adb5a4",
+  "id": "1d9a3871-7c96-43bf-a33d-72b62a2a91d7",
   "newPassword": "123456"
 }

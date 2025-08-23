@@ -73,7 +73,7 @@ public class AuthController {
         return ResponseEntity.ok(new JweResponse(accessToken.toString()));
     }
 
-    @GetMapping("/refresh")
+    @PostMapping("/refresh")
     public ResponseEntity<JweResponse> refreshToken(
             @CookieValue(value = "refresh_token") String refreshToken // value = "name_des_cookies" vgl. login
     ) throws Exception {

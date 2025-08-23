@@ -10,8 +10,8 @@ Content-Type: application/json
 }
 
 ### Code bestätigen:
-POST http://localhost:8080/users/confirm
-Cookie: confirmable_token={{registerToken}}
+POST http://localhost:8080/users/register/confirm
+Cookie: register_token={{registerToken}}
 Content-Type: application/json
 
 {
@@ -55,19 +55,21 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "email": "user.one@bibliobytes.at",
-  "password": "123456",
+  "oldEmail": "user.one@bibliobytes.at",
+  "oldPassword": "123456",
   "newEmail": "test.one@bibliobytes.at",
   "confirmNewEmail": "test.one@bibliobytes.at"
 }
 
 ### Code bestätigen
-POST http://localhost:8080/users/confirm
-Cookie: confirmable_token={{updateEmailToken}}
+PUT http://localhost:8080/users/updateCredentials/confirm
+Authorization: Bearer {{accessToken}}
+Cookie: update_credentials_token={{updateEmailToken}}
 Content-Type: application/json
 
 {
-  "code": {{code}}
+  "codeFromOldEmail": {{codeFromOldEmail}},
+  "codeFromNewEmail": {{codeFromNewEmail}}
 }
 
 ### Passwort ändern
@@ -76,19 +78,20 @@ Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "email": "test.one@bibliobytes.at",
-  "password": "123456",
+  "oldEmail": "test.one@bibliobytes.at",
+  "oldPassword": "123456",
   "newPassword": "654321",
   "confirmNewPassword": "654321"
 }
 
 ### Code bestätigen
-POST http://localhost:8080/users/confirm
+POST http://localhost:8080/users/updateCredentials/confirm
+Authorization: Bearer {{accessToken}}
 Cookie: confirmable_token={{updatePasswordToken}}
 Content-Type: application/json
 
 {
-  "code": {{code}}
+  "codeFromOldEmail": {{codeFromOldEmail}}
 }
 
 ### Delte Me
