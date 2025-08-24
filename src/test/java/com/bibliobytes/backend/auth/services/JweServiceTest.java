@@ -1,16 +1,13 @@
 package com.bibliobytes.backend.auth.services;
 
-import com.bibliobytes.backend.auth.config.JweConfig;
-import com.bibliobytes.backend.email.MailServerConfig;
-import com.bibliobytes.backend.email.MailService;
+import com.bibliobytes.backend.auth.services.jwe.Jwe;
+import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
 
 
 //@SpringBootTest(classes = {JweConfig.class, MailServerConfig.class})

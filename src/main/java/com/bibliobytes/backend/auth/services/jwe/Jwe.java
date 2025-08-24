@@ -1,9 +1,5 @@
-package com.bibliobytes.backend.auth.services;
+package com.bibliobytes.backend.auth.services.jwe;
 
-import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
-import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
-import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
-import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.crypto.RSASSASigner;

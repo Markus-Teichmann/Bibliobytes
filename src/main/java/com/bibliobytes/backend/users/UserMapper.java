@@ -1,13 +1,9 @@
 package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.auth.services.Jwe;
-import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
-import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

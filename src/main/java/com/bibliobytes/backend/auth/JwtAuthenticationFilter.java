@@ -1,8 +1,7 @@
 package com.bibliobytes.backend.auth;
 
 import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
-import com.bibliobytes.backend.users.entities.Role;
-import com.bibliobytes.backend.auth.services.JweService;
+import com.bibliobytes.backend.auth.services.jwe.JweService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

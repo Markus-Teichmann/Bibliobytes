@@ -14,23 +14,17 @@ create table users
 
 create table tags
 (
-    id   BIGINT auto_increment
-        primary key,
+    id   BIGINT auto_increment primary key,
     name varchar(20) not null
 );
 
 create table items
 (
+    id    BIGINT auto_increment primary key,
     titel varchar(200)  not null,
     place varchar(100)  not null,
     topic varchar(100)  not null,
-    owner binary(16)    null,
-    stock int default 1 not null,
-    note  varchar(500)  null,
-    id    BIGINT auto_increment primary key,
-    constraint items_external_id
-        foreign key (owner) references users (id)
-            on update cascade on delete set null
+    note  varchar(500)  null
 );
 
 create table item_tags
@@ -47,24 +41,26 @@ create table item_tags
 
 create table books
 (
+    id    BIGINT auto_increment primary key,
+    titel varchar(200)  not null,
+    place varchar(100)  not null,
+    topic varchar(100)  not null,
+    note  varchar(500)  null,
     publisher varchar(200) not null,
     isbn      varchar(13)  not null,
-    author    varchar(255) not null,
-    item_id   BIGINT auto_increment primary key,
-    constraint books_items_id_fk
-        foreign key (item_id) references items (id)
-            on update cascade on delete cascade
+    author    varchar(255) not null
 );
 
 create table digitals
 (
+    id    BIGINT auto_increment primary key,
+    titel varchar(200)  not null,
+    place varchar(100)  not null,
+    topic varchar(100)  not null,
+    note  varchar(500)  null,
     runtime    varchar(20)  null,
     label      varchar(100) null,
-    production varchar(100) null,
-    item_id    BIGINT auto_increment primary key,
-    constraint digitals_items_id_fk
-        foreign key (item_id) references items (id)
-            on update cascade on delete cascade
+    production varchar(100) null
 );
 
 create table actors
@@ -83,23 +79,54 @@ create table subtitles
     language varchar(100) not null
 );
 
-create table digital_details
+create table digitals_actors
 (
-    id BIGINT not null,
-    digital_id  BIGINT not null,
-    actor_id    BIGINT null,
-    language_id BIGINT null,
-    subtitle_id BIGINT null,
-    constraint digital_details_pk
-        primary key (id),
-    constraint digital_details_actors_id_fk
-        foreign key (actor_id) references actors (id),
-    constraint digital_details_digitals_id_fk
-        foreign key (digital_id) references digitals (item_id),
-    constraint digital_details_languages_id_fk
-        foreign key (language_id) references languages (id),
-    constraint digital_details_subtitles_id_fk
-        foreign key (subtitle_id) references subtitles (id)
+    item_id BIGINT not null,
+    actor_id  BIGINT not null,
+    constraint digitals_actors_pk
+        primary key (actor_id, item_id),
+    constraint digitals_actors_fk_one
+        foreign key (item_id) references items (id),
+    constraint digitals_actors_fk_two
+        foreign key (actor_id) references actors (id)
+);
+
+create table digitals_languages
+(
+    item_id BIGINT not null,
+    language_id  BIGINT not null,
+    constraint digitals_languages_pk
+        primary key (language_id, item_id),
+    constraint digitals_languages_fk_one
+        foreign key (item_id) references items (id),
+    constraint digitals_languages_fk_two
+        foreign key (language_id) references languages (id)
+);
+
+create table digitals_subtitles
+(
+    item_id BIGINT not null,
+    subtitles_id  BIGINT not null,
+    constraint digitals_subtitles_pk
+        primary key (subtitles_id, item_id),
+    constraint digitals_subtitles_fk_one
+        foreign key (item_id) references items (id),
+    constraint digitals_subtitles_fk_two
+        foreign key (subtitles_id) references subtitles (id)
+);
+
+create table donations
+(
+    id BIGINT auto_increment primary key,
+    owner_id BINARY(16) null,
+    item_id BIGINT not null,
+    amount INTEGER default 1 not null,
+    status varchar(10) default 'applied' not null,
+    constraint donations_user_fk
+        foreign key (owner_id) references users (id)
+            on update cascade on delete set null,
+    constraint donations_item_fk
+        foreign key (item_id) references items (id)
 );
 
 create table rentals

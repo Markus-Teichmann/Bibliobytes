@@ -1,7 +1,7 @@
-package com.bibliobytes.backend.auth.services;
+package com.bibliobytes.backend.auth.services.jwe;
 
 import com.bibliobytes.backend.auth.config.JweConfig;
-import com.bibliobytes.backend.email.MailService;
+import com.bibliobytes.backend.auth.services.mail.MailService;
 import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
 import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;

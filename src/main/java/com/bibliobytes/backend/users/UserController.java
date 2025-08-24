@@ -1,12 +1,12 @@
 package com.bibliobytes.backend.users;
 
 import com.bibliobytes.backend.auth.config.JweConfig;
-import com.bibliobytes.backend.auth.services.Jwe;
+import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.users.dtos.*;
 import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
 import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
 import com.bibliobytes.backend.users.entities.Role;
-import com.bibliobytes.backend.auth.services.JweService;
+import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.users.entities.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;

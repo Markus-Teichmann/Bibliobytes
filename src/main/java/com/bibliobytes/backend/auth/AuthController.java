@@ -4,7 +4,7 @@ import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.auth.dtos.LoginRequest;
 import com.bibliobytes.backend.users.UserMapper;
 import com.bibliobytes.backend.auth.dtos.JweResponse;
-import com.bibliobytes.backend.auth.services.JweService;
+import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;

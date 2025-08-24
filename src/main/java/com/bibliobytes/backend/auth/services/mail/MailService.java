@@ -1,4 +1,4 @@
-package com.bibliobytes.backend.email;
+package com.bibliobytes.backend.auth.services.mail;
 
 import lombok.AllArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
