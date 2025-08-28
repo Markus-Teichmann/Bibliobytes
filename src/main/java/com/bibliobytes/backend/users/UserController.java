@@ -94,7 +94,7 @@ public class UserController {
         return ResponseEntity.created(uri).body(userMapper.toDto(user));
     }
 
-    @PutMapping("/updateCredentials")
+    @PutMapping("/update/credentials")
     public ResponseEntity<?> updateCredentials(
             @Valid @RequestBody UpdateCredentialsDto request,
             HttpServletResponse response
@@ -172,7 +172,7 @@ public class UserController {
         );
     }
 
-    @PutMapping("/updateCredentials/confirm")
+    @PutMapping("/update/credentials/confirm")
     public ResponseEntity<?> confirmUpdateCredentials(
             @Valid @RequestBody UpdateCodeRequest codeRequest,
             @CookieValue(value = "update_credentials_token") String token
@@ -197,7 +197,7 @@ public class UserController {
         return ResponseEntity.ok().body(userMapper.toDto(user));
     }
 
-    @PutMapping("/updateProfile")
+    @PutMapping("/update/profile")
     public ResponseEntity<UserDto> updateProfile(
             @Valid @RequestBody UpdateProfileDto request
     ) {
@@ -213,7 +213,7 @@ public class UserController {
         return ResponseEntity.ok(userMapper.toDto(user));
     }
 
-    @PutMapping("/updateRole")
+    @PutMapping("/update/role")
     public ResponseEntity<?> updateRole(
         @Valid @RequestBody UpdateRole request
     ) {
