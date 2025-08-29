@@ -1,0 +1,1 @@
+INSERT into users(email, first_name, last_name, role, password) values ('admin.one@bibliobytes.at', 'admin', 'one', 'ADMIN', '$2a$10$.fIFwkgM8y4lN7m9CQgSKOqVkzp92N/DGIY8WumR5SGdBMZjWi2Mi')

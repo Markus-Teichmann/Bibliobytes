@@ -1,0 +1,1 @@
+Update users u set id = 'f5d9ebda-47cc-405f-ba85-ca9ca16559d8' where u.email = 'user.one@bibliobytes.at'

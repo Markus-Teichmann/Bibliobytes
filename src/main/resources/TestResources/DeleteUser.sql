@@ -1,0 +1,1 @@
+DELETE from users u where u.email = 'user.one@bibliobytes.at'

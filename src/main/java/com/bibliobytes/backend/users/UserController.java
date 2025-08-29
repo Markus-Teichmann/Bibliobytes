@@ -109,7 +109,7 @@ public class UserController {
             return ResponseEntity.badRequest().build();
         }
         if (me.getRole() == Role.ADMIN && request.getId() != null) {
-            // Admins dürfen die Credentials von anderen Nutern ohne erneutes Prüfen verändern.
+            // Admins dürfen die Credentials von anderen Nutzern ohne erneutes Prüfen verändern.
             // Für diesen Teil ist auch die Angabe des alten Passwords nicht notwendig.
             if (request.getNewPassword() != null) {
                 request.setNewPassword(passwordEncoder.encode(request.getNewPassword()));
