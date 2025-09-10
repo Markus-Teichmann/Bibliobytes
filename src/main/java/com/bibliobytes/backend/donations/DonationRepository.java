@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface DonationRepository extends CrudRepository<Donation, Long> {
     List<Donation> findAllByItem(Item item);
+    int countAllByItem(Item item);
 }

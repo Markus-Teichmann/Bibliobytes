@@ -1,1 +1,1 @@
-INSERT into users (email, first_name, last_name, role, password, id) values ('user.one@bibliobytes.at', 'user', 'one', 'APPLICANT', '$2a$10$V142A.UAxzETbguBeSRfzOCOtPhC1OxBAsmfgD0QhgbqxFnc35rKW', 'f5d9ebda-47cc-405f-ba85-ca9ca16559d8')
+INSERT into users (email, first_name, last_name, role, password) values ('user.one@bibliobytes.at', 'user', 'one', 'USER', '$2a$10$V142A.UAxzETbguBeSRfzOCOtPhC1OxBAsmfgD0QhgbqxFnc35rKW')

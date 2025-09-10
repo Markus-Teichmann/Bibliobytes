@@ -10,14 +10,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
 @Entity
-@ToString
 @Table(name = "users")
 public class User {
     @Id
@@ -60,8 +57,9 @@ public class User {
         }
     }
 
+
     @OneToMany(mappedBy = "owner")
-    private List<Donation> donations = new ArrayList<>();
+    private Set<Donation> donations = new HashSet<>();
 
     public void donate(Donation donation) {
         donations.add(donation);
@@ -74,7 +72,7 @@ public class User {
     }
 
     @OneToMany(mappedBy = "user")
-    private List<Rental> rentals = new ArrayList<>();
+    private Set<Rental> rentals = new HashSet<>();
 
     public void rent(Rental rental) {
         rentals.add(rental);

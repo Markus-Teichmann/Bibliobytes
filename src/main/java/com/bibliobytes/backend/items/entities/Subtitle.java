@@ -6,6 +6,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter
 @Setter
 @Entity
@@ -20,5 +23,14 @@ public class Subtitle {
     @NotNull
     @Column(name = "language", nullable = false, length = 100)
     private String language;
+
+    @ManyToMany(mappedBy = "subtitles")
+    private Set<Digital> digitals = new HashSet<Digital>();
+    public void addDigital(Digital digital) {
+        if (!digitals.contains(digital)) {
+            digitals.add(digital);
+            digital.addSubtitle(this);
+        }
+    }
 
 }

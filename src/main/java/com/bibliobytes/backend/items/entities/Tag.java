@@ -15,6 +15,7 @@ import java.util.Set;
 @Table(name = "tags")
 public class Tag {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -23,6 +24,13 @@ public class Tag {
     @Column(name = "name", nullable = false, length = 20)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     private Set<Item> items = new HashSet<Item>();
+
+    public void addItem(Item item) {
+        if (!items.contains(item)) {
+            items.add(item);
+            item.addTag(this);
+        }
+    }
 }

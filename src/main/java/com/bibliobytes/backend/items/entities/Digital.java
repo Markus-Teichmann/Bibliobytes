@@ -27,24 +27,43 @@ public class Digital extends Item {
     @ManyToMany
     @JoinTable(
             name = "digitals_actors",
-            joinColumns = @JoinColumn(name = "item_id"),
+            joinColumns = @JoinColumn(name = "digitals_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
     private Set<Actor> actors = new HashSet<>();
+    public void addActor(Actor actor) {
+        if (!actors.contains(actor)) {
+            actors.add(actor);
+            actor.addDigital(this);
+        }
+    }
 
     @ManyToMany
     @JoinTable(
             name = "digitals_languages",
-            joinColumns = @JoinColumn(name = "item_id"),
+            joinColumns = @JoinColumn(name = "digitals_id"),
             inverseJoinColumns = @JoinColumn(name = "language_id")
     )
     private Set<Language> languages = new HashSet<>();
+    public void addLanguage(Language language) {
+        if (!languages.contains(language)) {
+            languages.add(language);
+            language.addDigital(this);
+        }
+    }
 
     @ManyToMany
     @JoinTable(
             name = "digitals_subtitles",
-            joinColumns = @JoinColumn(name = "item_id"),
+            joinColumns = @JoinColumn(name = "digitals_id"),
             inverseJoinColumns = @JoinColumn(name = "subtitles_id")
     )
     private Set<Subtitle> subtitles = new HashSet<>();
+    public void addSubtitle(Subtitle subtitle) {
+        if (!subtitles.contains(subtitle)) {
+            subtitles.add(subtitle);
+            subtitle.addDigital(this);
+        }
+    }
+
 }

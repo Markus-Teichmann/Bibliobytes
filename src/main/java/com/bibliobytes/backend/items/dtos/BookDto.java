@@ -1,19 +1,22 @@
 package com.bibliobytes.backend.items.dtos;
 
+import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class BookDto {
-    private String title;
+    private String titel;
     private String place;
     private String topic;
-    private List<User> owners;
-    private int stock;
     private String note;
+    private Set<TagDto> tags;
+    public String author;
     private String publisher;
     public String isbn;
-    public String author;
+    private Set<UserDto> owners;
+    private int stock;
 }

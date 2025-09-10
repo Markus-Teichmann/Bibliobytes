@@ -1,5 +1,6 @@
 package com.bibliobytes.backend.rentals.entities;
 
+import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.items.entities.Item;
 import com.bibliobytes.backend.users.entities.User;
 import jakarta.persistence.*;
@@ -24,8 +25,8 @@ public class Rental {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "item_id", nullable = false)
-    private Item item;
+    @JoinColumn(name = "donation_id", nullable = false)
+    private Donation donation;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

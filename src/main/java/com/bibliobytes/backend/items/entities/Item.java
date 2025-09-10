@@ -13,19 +13,16 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "items")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Item {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -41,32 +38,26 @@ public class Item {
     @Column(name = "note", length = 500)
     private String note;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "item_tags",
             joinColumns = @JoinColumn(name = "item_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags = new LinkedHashSet<>();
+    private Set<Tag> tags = new HashSet<>();
+
+    public void addTag(Tag tag) {
+        if (!tags.contains(tag)) {
+            tags.add(tag);
+            tag.addItem(this);
+        }
+    }
 
     @OneToMany(mappedBy = "item")
-    private List<Donation> donations = new ArrayList<>();
+    private Set<Donation> donations = new HashSet<>();
 
     public void donate(Donation donation) {
         donations.add(donation);
         donation.setItem(this);
-    }
-
-    @OneToMany(mappedBy = "item")
-    private List<Rental> rentals = new ArrayList<>();
-
-    public void addToRental(Rental rental) {
-        rentals.add(rental);
-        rental.setItem(this);
-    }
-
-    public void removeFromRental(Rental rental) {
-        rentals.remove(rental);
-        rental.setItem(null);
     }
 }
