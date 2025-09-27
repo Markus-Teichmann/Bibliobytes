@@ -1,16 +1,11 @@
 package com.bibliobytes.backend.rentals.entities;
 
 import com.bibliobytes.backend.donations.entities.Donation;
-import com.bibliobytes.backend.items.entities.Item;
 import com.bibliobytes.backend.users.entities.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 
@@ -44,8 +39,38 @@ public class Rental {
     @Enumerated(EnumType.STRING)
     private RentalState status;
 
+    public void setStatus(RentalState state) {
+        if (
+                this.status == RentalState.REQUESTED &&
+                state == RentalState.APPROVED
+        ) {
+            donation.getItem().decrementStock();
+            donation.getItem().incrementCount();
+        }
+        if (
+            this.status == RentalState.APPROVED &&
+            (state == RentalState.DENIED || state == RentalState.RETURNED)
+        ) {
+            donation.getItem().incrementStock();
+        }
+        this.status = state;
+    }
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "external_id")
     private User external;
+
+    @PrePersist
+    protected void setDefaults() {
+        if (status == null) {
+            status = RentalState.REQUESTED;
+        }
+        if (startDate == null) {
+            startDate = LocalDate.now();
+        }
+        if (endDate == null) {
+            endDate = LocalDate.now().plusWeeks(4);
+        }
+    }
 
 }

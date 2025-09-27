@@ -2,7 +2,7 @@ package com.bibliobytes.backend.auth.services;
 
 import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.auth.services.jwe.JweService;
-import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.requests.RegisterUserRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

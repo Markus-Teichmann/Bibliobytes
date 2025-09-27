@@ -1,11 +1,11 @@
 package com.bibliobytes.backend.users;
 
 import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
-import com.bibliobytes.backend.auth.dtos.LoginRequest;
+import com.bibliobytes.backend.users.requests.ConfirmationCodeRequest;
+import com.bibliobytes.backend.users.requests.*;
 import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.auth.services.mail.MailService;
-import com.bibliobytes.backend.users.dtos.*;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.users.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -43,8 +44,8 @@ public class UserControllerTest {
     private PasswordEncoder passwordEncoder;
     @MockitoBean
     private MailService mockMailService;
-    @MockitoBean
-    private UserRepository mockUserRepository;
+//    @MockitoBean
+//    private UserRepository mockUserRepository;
 
     private static final User validExternal = new User();
     private static final User validApplicant = new User();
@@ -55,7 +56,7 @@ public class UserControllerTest {
     private static final String validAdminClearPassword = "password";
 
     private static final RegisterCodeRequest validRegisterCode = new RegisterCodeRequest();
-    private static final UpdateCodeRequest validUpdateCode = new UpdateCodeRequest();
+    private static final ConfirmationCodeRequest validUpdateCode = new ConfirmationCodeRequest();
 
     @BeforeAll
     static void setFinalData() {
@@ -96,31 +97,31 @@ public class UserControllerTest {
     @BeforeEach
     void setDefaultBehavior_ValidData() {
         when(mockMailService.sendCodeTo(anyString())).thenReturn("123456");
-
-        when(mockUserRepository.findByEmail(validExternal.getEmail())).thenReturn(Optional.of(validExternal));
-        when(mockUserRepository.findByEmail(validApplicant.getEmail())).thenReturn(Optional.of(validApplicant));
-        when(mockUserRepository.findByEmail(validUser.getEmail())).thenReturn(Optional.of(validUser));
-        when(mockUserRepository.findByEmail(validAdmin.getEmail())).thenReturn(Optional.of(validAdmin));
-
-        when(mockUserRepository.findById(validExternal.getId())).thenReturn(Optional.of(validExternal));
-        when(mockUserRepository.findById(validApplicant.getId())).thenReturn(Optional.of(validApplicant));
-        when(mockUserRepository.findById(validUser.getId())).thenReturn(Optional.of(validUser));
-        when(mockUserRepository.findById(validAdmin.getId())).thenReturn(Optional.of(validAdmin));
-
-        when(mockUserRepository.findAllByRole(Role.EXTERNAL)).thenReturn(List.of(validExternal));
-        when(mockUserRepository.findAllByRole(Role.APPLICANT)).thenReturn(List.of(validApplicant));
-        when(mockUserRepository.findAllByRole(Role.USER)).thenReturn(List.of(validUser));
-        when(mockUserRepository.findAllByRole(Role.SERVICE)).thenReturn(List.of());
-        when(mockUserRepository.findAllByRole(Role.ADMIN)).thenReturn(List.of(validAdmin));
+//
+//        when(mockUserRepository.findByEmail(validExternal.getEmail())).thenReturn(Optional.of(validExternal));
+//        when(mockUserRepository.findByEmail(validApplicant.getEmail())).thenReturn(Optional.of(validApplicant));
+//        when(mockUserRepository.findByEmail(validUser.getEmail())).thenReturn(Optional.of(validUser));
+//        when(mockUserRepository.findByEmail(validAdmin.getEmail())).thenReturn(Optional.of(validAdmin));
+//
+//        when(mockUserRepository.findById(validExternal.getId())).thenReturn(Optional.of(validExternal));
+//        when(mockUserRepository.findById(validApplicant.getId())).thenReturn(Optional.of(validApplicant));
+//        when(mockUserRepository.findById(validUser.getId())).thenReturn(Optional.of(validUser));
+//        when(mockUserRepository.findById(validAdmin.getId())).thenReturn(Optional.of(validAdmin));
+//
+//        when(mockUserRepository.findAllByRole(Role.EXTERNAL)).thenReturn(Set.of(validExternal));
+//        when(mockUserRepository.findAllByRole(Role.APPLICANT)).thenReturn(Set.of(validApplicant));
+//        when(mockUserRepository.findAllByRole(Role.USER)).thenReturn(Set.of(validUser));
+//        when(mockUserRepository.findAllByRole(Role.SERVICE)).thenReturn(Set.of());
+//        when(mockUserRepository.findAllByRole(Role.ADMIN)).thenReturn(Set.of(validAdmin));
+//    }
+//    private void clearDatabase() {
+//        when(mockUserRepository.findByEmail(validExternal.getEmail())).thenReturn(Optional.empty());
+//        when(mockUserRepository.findByEmail(validUser.getEmail())).thenReturn(Optional.empty());
+//        when(mockUserRepository.findByEmail(validAdmin.getEmail())).thenReturn(Optional.empty());
     }
-    private void clearDatabase() {
-        when(mockUserRepository.findByEmail(validExternal.getEmail())).thenReturn(Optional.empty());
-        when(mockUserRepository.findByEmail(validUser.getEmail())).thenReturn(Optional.empty());
-        when(mockUserRepository.findByEmail(validAdmin.getEmail())).thenReturn(Optional.empty());
-    }
+    @Sql(scripts = "/TestResources/DeleteExternal.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     public void testRegisterExternal_ValidData() throws Exception {
-        clearDatabase();
         RegisterUserRequest request = new RegisterUserRequest();
         request.setEmail(validExternal.getEmail());
         request.setFirstName(validExternal.getFirstName());
@@ -140,9 +141,9 @@ public class UserControllerTest {
         Assertions.assertEquals(validExternal.getLastName(), responseMap.get("lastName"));
         Assertions.assertEquals(validExternal.getRole().name(), responseMap.get("role"));
     }
+    @Sql(scripts = "/TestResources/DeleteUser.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     public void testRegisterUser_ValidData() throws Exception {
-        clearDatabase();
         RegisterUserRequest request = new RegisterUserRequest();
         request.setEmail(validUser.getEmail());
         request.setFirstName(validUser.getFirstName());
@@ -157,9 +158,9 @@ public class UserControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
-        String response = result.getResponse().getContentAsString();
-        Map<String,String> responseMap = objectMapper.readValue(response, HashMap.class);
-        String token = responseMap.get("token");
+        System.out.println("Hello from Test Class");
+        Cookie cookie = result.getResponse().getCookie("register_token");
+        String token = cookie.getValue();
         Jwe jwe = jweService.parse(token);
         Assertions.assertEquals("123456", jwe.getCode());
         RegisterUserRequest createdData = jwe.toDto();
@@ -177,20 +178,22 @@ public class UserControllerTest {
                 )
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andReturn();
-        response = result.getResponse().getContentAsString();
-        responseMap = objectMapper.readValue(response, HashMap.class);
+        String response = result.getResponse().getContentAsString();
+        Map<String, String> responseMap = objectMapper.readValue(response, HashMap.class);
         Assertions.assertEquals(request.getEmail(), responseMap.get("email"));
         Assertions.assertEquals(request.getFirstName(), responseMap.get("firstName"));
         Assertions.assertEquals(request.getLastName(), responseMap.get("lastName"));
         Assertions.assertEquals(Role.APPLICANT.name(), responseMap.get("role"));
     }
+    @Sql(scripts = "/TestResources/DeleteAdmin.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/TestResources/InsertAdmin.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     public void testLoginAdmin_ValidData() throws Exception {
         LoginRequest request = new LoginRequest();
         request.setEmail(validAdmin.getEmail());
         request.setPassword(validAdminClearPassword);
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/auth/login")
+                .post("/users/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
         )
@@ -203,15 +206,18 @@ public class UserControllerTest {
         Jwe jwe = jweService.generateAccessToken(accessTokenDto);
         return "Bearer " + jwe.toString();
     }
+    @Sql(scripts = "/TestResources/DeleteUser.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/TestResources/InsertUser.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+//    @Sql(scripts = "/TestResources/SetUserID.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     @Test
     public void testAdminUpdateForeignRole_ValidData() throws Exception {
         String token = getAccessToken_ValidData(validAdmin);
 
-        UpdateRole request = new UpdateRole();
+        UpdateRoleRequest request = new UpdateRoleRequest();
         request.setRole(Role.USER);
-        request.setId(validApplicant.getId());
+//        request.setId(validApplicant.getId());
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/users/update/role")
+                .put("/users/" + validApplicant.getId() + "/role")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
@@ -227,20 +233,16 @@ public class UserControllerTest {
         Assertions.assertEquals(Role.USER.name(), responseMap.get("role"));
     }
     @Test
-    public void testAdminUpdateForeignCredentials_ValidData() throws Exception {
+    public void testAdminUpdateForeignEmail_ValidData() throws Exception {
         String token = getAccessToken_ValidData(validAdmin);
 
-        UpdateCredentialsDto request = new UpdateCredentialsDto();
-        request.setId(validUser.getId());
+        UpdateEmailRequest request = new UpdateEmailRequest();
         request.setOldEmail(validUser.getEmail());
         request.setNewEmail("new.email@bibliobytes.at");
         request.setConfirmNewEmail("new.email@bibliobytes.at");
-        request.setOldPassword(validUserClearPassword);
-        request.setNewPassword("new.password");
-        request.setConfirmNewPassword("new.password");
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/users/update/credentials")
+                .put("/users/" + validUser.getId() + "/email")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
@@ -254,22 +256,19 @@ public class UserControllerTest {
         Assertions.assertEquals(validUser.getFirstName(), responseMap.get("firstName"));
         Assertions.assertEquals(validUser.getLastName(), responseMap.get("lastName"));
         Assertions.assertEquals(validUser.getRole().name(), responseMap.get("role"));
-        Assertions.assertTrue(passwordEncoder.matches("new.password", validUser.getPassword()));
+        Assertions.assertTrue(passwordEncoder.matches("password", validUser.getPassword()));
     }
     @Test
     public void testUserUpdateOwnCredentials_ValidData() throws Exception {
         String token = getAccessToken_ValidData(validUser);
 
-        UpdateCredentialsDto request = new UpdateCredentialsDto();
+        UpdateEmailRequest request = new UpdateEmailRequest();
         request.setOldEmail(validUser.getEmail());
         request.setNewEmail("new.email@bibliobytes.at");
         request.setConfirmNewEmail("new.email@bibliobytes.at");
-        request.setOldPassword(validUserClearPassword);
-        request.setNewPassword("new.password");
-        request.setConfirmNewPassword("new.password");
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/users/update/credentials")
+                .post("/me/email")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
@@ -280,15 +279,15 @@ public class UserControllerTest {
         Map<String, String> responseMap = objectMapper.readValue(response, HashMap.class);
         String updateCredentialsToken = responseMap.get("token");
 
-        UpdateCodeRequest updateCodeRequest = new UpdateCodeRequest();
-        updateCodeRequest.setCodeFromOldEmail("123456");
-        updateCodeRequest.setCodeFromNewEmail("123456");
+        ConfirmationCodeRequest confirmationCodeRequest = new ConfirmationCodeRequest();
+        confirmationCodeRequest.setCodeFromOldEmail("123456");
+        confirmationCodeRequest.setCodeFromNewEmail("123456");
         result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/users/update/credentials/confirm")
+                .put("/me/email")
                 .cookie(new Cookie("update_credentials_token", updateCredentialsToken))
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(updateCodeRequest))
+                .content(objectMapper.writeValueAsString(confirmationCodeRequest))
         )
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
@@ -299,16 +298,15 @@ public class UserControllerTest {
         Assertions.assertEquals(validUser.getFirstName(), responseMap.get("firstName"));
         Assertions.assertEquals(validUser.getLastName(), responseMap.get("lastName"));
         Assertions.assertEquals(validUser.getRole().name(), responseMap.get("role"));
-        Assertions.assertTrue(passwordEncoder.matches("new.password", validUser.getPassword()));
+        Assertions.assertTrue(passwordEncoder.matches("password", validUser.getPassword()));
     }
     @Test
     public void testUserUpdateOwnProfile_ValidData() throws Exception {
         String token = getAccessToken_ValidData(validUser);
-        UpdateProfileDto request = new UpdateProfileDto();
+        UpdateFirstNameRequest request = new UpdateFirstNameRequest();
         request.setFirstName("first");
-        request.setLastName("last");
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .put("/users/update/profile")
+                .put("/me/firstname")
                 .header("Authorization", token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
@@ -320,7 +318,7 @@ public class UserControllerTest {
         Assertions.assertEquals(validUser.getId(), UUID.fromString(responseMap.get("id")));
         Assertions.assertEquals(validUser.getEmail(), responseMap.get("email"));
         Assertions.assertEquals("first", responseMap.get("firstName"));
-        Assertions.assertEquals("last", responseMap.get("lastName"));
+        Assertions.assertEquals(validUser.getLastName(), responseMap.get("lastName"));
         Assertions.assertEquals(validUser.getRole().name(), responseMap.get("role"));
     }
     @Test
@@ -361,7 +359,7 @@ public class UserControllerTest {
     public void testAdminGetAllApplicants_ValidData() throws Exception {
         String token = getAccessToken_ValidData(validAdmin);
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
-                .get("/users/applicants")
+                .get("/users/new")
                 .header("Authorization", token)
         )
         .andExpect(MockMvcResultMatchers.status().isOk())

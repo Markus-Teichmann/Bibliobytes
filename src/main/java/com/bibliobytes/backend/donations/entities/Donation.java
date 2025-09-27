@@ -1,6 +1,6 @@
 package com.bibliobytes.backend.donations.entities;
 
-import com.bibliobytes.backend.items.entities.Item;
+import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.users.entities.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -36,6 +36,22 @@ public class Donation {
     @Enumerated(EnumType.STRING)
     private DonationState status;
 
+    public void setStatus(DonationState state) {
+        if (
+                this.status == DonationState.APPLIED &&
+                state == DonationState.ACCEPTED
+        ) {
+            item.incrementStock();
+        }
+        if (
+                this.status == DonationState.ACCEPTED &&
+                (state == DonationState.WITHDRAWN || state == DonationState.REJECTED)
+        ) {
+            item.decrementStock();
+        }
+        this.status = state;
+    }
+
     @Column(name = "donation_date")
     private LocalDate date;
 
@@ -46,6 +62,9 @@ public class Donation {
         }
         if (status == null) {
             status = DonationState.APPLIED;
+        }
+        if (condition == null) {
+            condition = Condition.USED;
         }
     }
 }

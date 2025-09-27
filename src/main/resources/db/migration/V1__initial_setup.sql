@@ -22,11 +22,14 @@ create table tags
 
 create table items
 (
-    id    BIGINT auto_increment primary key,
-    titel varchar(200)  not null,
-    place varchar(100)  null,
-    topic varchar(100)  not null,
-    note  varchar(500)  null
+    id              BIGINT auto_increment primary key,
+    titel           varchar(200)  not null,
+    place           varchar(100)  null,
+    topic           varchar(100)  not null,
+    note            varchar(500)  null,
+    stock           SMALLINT not null,
+    rental_count    SMALLINT not null,
+    state           varchar(10) default 'PUBLIC' not null
 );
 
 create table item_tags

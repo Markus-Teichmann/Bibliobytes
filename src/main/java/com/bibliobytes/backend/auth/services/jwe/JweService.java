@@ -4,8 +4,9 @@ import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.auth.services.mail.MailService;
 import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
 import com.bibliobytes.backend.auth.dtos.RefreshTokenDto;
-import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
-import com.bibliobytes.backend.users.dtos.UpdateCredentialsDto;
+import com.bibliobytes.backend.users.requests.RegisterUserRequest;
+import com.bibliobytes.backend.users.requests.UpdateEmailRequest;
+import com.bibliobytes.backend.users.requests.UpdatePasswordRequest;
 import com.nimbusds.jose.JWEObject;
 import com.nimbusds.jose.crypto.RSADecrypter;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -18,6 +19,7 @@ import java.io.*;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -48,7 +50,9 @@ public class JweService {
     }
 
     public Jwe generateRegisterUserToken(RegisterUserRequest dto) throws Exception {
+        System.out.println("Hello from JweService");
         String code = mailService.sendCodeTo(dto.getEmail());
+        System.out.println("Code: " + code);
         return generateToken(
                 dto.getEmail(),
                 Map.of(
@@ -61,22 +65,49 @@ public class JweService {
 
     }
 
-    public Jwe generateUpdateUserCredentialsToken(UpdateCredentialsDto dto) throws Exception {
-        String code = mailService.sendCodeTo(dto.getOldEmail());
-        if (dto.getNewEmail() != null) {
-            code += mailService.sendCodeTo(dto.getNewEmail());
-        }
+    public Jwe generateUpdateEmailToken(UUID id, UpdateEmailRequest request) throws Exception {
+        String code = mailService.sendCodeTo(request.getOldEmail());
+        code += mailService.sendCodeTo(request.getNewEmail());
         return generateToken(
-                dto.getOldEmail(),
+                id.toString(),
                 Map.of(
                         "code", code,
-                        "dto", dto,
-                        "dtoClassName", dto.getClass().getName()
+                        "dto", request,
+                        "dtoClassName", request.getClass().getName()
                 ),
                 config.getUpdateUserCredentialsTokenExpiration()
         );
-
     }
+
+    public Jwe generateUpdatePasswordToken(UUID id, UpdatePasswordRequest request, String email) throws Exception {
+        String code = mailService.sendCodeTo(email);
+        return generateToken(
+                id.toString(),
+                Map.of(
+                        "code", code,
+                        "dto", request,
+                        "dtoClassName", request.getClass().getName()
+                ),
+                config.getUpdateUserCredentialsTokenExpiration()
+        );
+    }
+
+//    public Jwe generateUpdateUserCredentialsToken(UpdateCredentialsRequest dto) throws Exception {
+//        String code = mailService.sendCodeTo(dto.getOldEmail());
+//        if (dto.getNewEmail() != null) {
+//            code += mailService.sendCodeTo(dto.getNewEmail());
+//        }
+//        return generateToken(
+//                dto.getOldEmail(),
+//                Map.of(
+//                        "code", code,
+//                        "dto", dto,
+//                        "dtoClassName", dto.getClass().getName()
+//                ),
+//                config.getUpdateUserCredentialsTokenExpiration()
+//        );
+//
+//    }
 
     private Jwe generateToken(String subject, Map<String, Object> claims, long expiration) throws Exception {
         var claimSetBuilder = new JWTClaimsSet.Builder()

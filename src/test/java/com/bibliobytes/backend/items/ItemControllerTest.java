@@ -1,27 +1,19 @@
 package com.bibliobytes.backend.items;
 
-import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
-import com.bibliobytes.backend.auth.dtos.LoginRequest;
-import com.bibliobytes.backend.auth.services.jwe.Jwe;
-import com.bibliobytes.backend.auth.services.jwe.JweService;
+import com.bibliobytes.backend.items.items.requests.DonateNewItemRequest;
+import com.bibliobytes.backend.users.requests.LoginRequest;
 import com.bibliobytes.backend.donations.entities.Condition;
-import com.bibliobytes.backend.items.dtos.DonationRequest;
-import com.bibliobytes.backend.items.entities.*;
-import com.bibliobytes.backend.users.UserRepository;
+import com.bibliobytes.backend.items.items.entities.*;
 import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.users.entities.User;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -29,8 +21,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.*;
-
-import static org.mockito.Mockito.when;
 
 @AutoConfigureMockMvc
 @SpringBootTest
@@ -40,9 +30,9 @@ public class ItemControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final DonationRequest donateValidBook = new DonationRequest();
-    private static final DonationRequest donateValidDigital = new DonationRequest();
-    //private static final DonationRequest donateValidItem = new DonationRequest();
+    private static final DonateNewItemRequest donateValidBook = new DonateNewItemRequest();
+    private static final DonateNewItemRequest donateValidDigital = new DonateNewItemRequest();
+    //private static final DonateNewItemRequest donateValidItem = new DonateNewItemRequest();
     private static final Set<String> validTags = new HashSet<>();
     private static final Set<String> validActorNames = new HashSet<>();
     private static final Set<String> validSubtitleLanguages = new HashSet<>();

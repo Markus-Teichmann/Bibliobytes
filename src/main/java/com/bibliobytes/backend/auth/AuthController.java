@@ -1,7 +1,7 @@
 package com.bibliobytes.backend.auth;
 
 import com.bibliobytes.backend.auth.config.JweConfig;
-import com.bibliobytes.backend.auth.dtos.LoginRequest;
+import com.bibliobytes.backend.users.requests.LoginRequest;
 import com.bibliobytes.backend.users.UserMapper;
 import com.bibliobytes.backend.auth.dtos.JweResponse;
 import com.bibliobytes.backend.auth.services.jwe.JweService;

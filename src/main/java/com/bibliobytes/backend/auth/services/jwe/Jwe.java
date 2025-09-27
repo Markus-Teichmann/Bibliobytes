@@ -14,6 +14,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @AllArgsConstructor
 public class Jwe {
@@ -41,6 +42,15 @@ public class Jwe {
         }
         return type.cast(deserializedDto);
     }
+
+//    public Optional<?> toDto() {
+//        Class<?> targetType = getDtoClass();
+//        Object deserializedDto = deserialize();
+//        if (!targetType.isInstance(deserializedDto)) {
+//            return Optional.empty();
+//        }
+//        return Optional.of(targetType.cast(deserializedDto));
+//    }
 
     private Class<?> getDtoClass() {
         String className = (String) claims.getClaim("dtoClassName");

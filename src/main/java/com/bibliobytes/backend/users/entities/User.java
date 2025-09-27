@@ -42,7 +42,7 @@ public class User {
     private Role role;
 
     public void setPassword(String password) {
-        if (role == Role.EXTERNAL || role == null) {
+        if (password != null && (role == Role.EXTERNAL || role == null)) {
             role = Role.APPLICANT;
         }
         this.password = password;
@@ -93,5 +93,12 @@ public class User {
         rental.setUser(null);
         rental.setExternal(null);
         rental.setStatus(RentalState.RETURNED);
+    }
+
+    @PrePersist
+    private void setDefaults() {
+        if (role == null) {
+            role = Role.EXTERNAL;
+        }
     }
 }

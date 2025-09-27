@@ -1,6 +1,6 @@
 package com.bibliobytes.backend.users;
 
-import com.bibliobytes.backend.users.dtos.RegisterUserRequest;
+import com.bibliobytes.backend.users.requests.RegisterUserRequest;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
 import org.mapstruct.Mapper;
@@ -17,6 +17,12 @@ public interface UserMapper {
     @Mapping(target = "donations", ignore = true)
     @Mapping(target = "rentals", ignore = true)
     User toEntity(RegisterUserRequest request);
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "donations", ignore = true)
+    @Mapping(target = "rentals", ignore = true)
+    @Mapping(target = "password", ignore = true)
+    User toExternal(String email, String firstName, String lastName);
 
 //    @Mapping(target = "email", expression = "java(registerToken.getSubject())")
 //    @Mapping(target = "firstName", expression = "java(registerToken.get(\"firstName\", String.class))")
