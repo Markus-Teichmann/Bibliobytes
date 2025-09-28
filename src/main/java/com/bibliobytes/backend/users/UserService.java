@@ -241,7 +241,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserDto findMe() {
-        User user = userRepository.findById(getMyId()).orElseThrow(UserNotFoundException::new);
+        User user = userRepository.findById(getMyId()).orElse(null);
         return userMapper.toDto(user);
     }
 

@@ -80,63 +80,6 @@ public class ItemController {
         URI uri = uriBuilder.path("/donations/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
     }
-//        if (
-//                request.getType() == Type.DIGITAL && (
-//                        request.getRuntime() == null ||
-//                                request.getActors() == null ||
-//                                request.getLanguages() == null
-//                )) {
-//            return ResponseEntity.badRequest().body(
-//                    Map.of(
-//                            "message", "For a Digital Runtime, Actors and Languages are required"
-//                    )
-//            );
-//        }
-//
-//        if (
-//                request.getType() == Type.BOOK && (
-//                        request.getPublisher() == null ||
-//                                request.getAuthor() == null ||
-//                                request.getIsbn() == null
-//                )) {
-//            return ResponseEntity.badRequest().body(
-//                    Map.of(
-//                            "message", "For a Book Publisher, Author and ISBN are required"
-//                    )
-//            );
-//        }
-//        if (
-//                (request.getType() == Type.BOOK && request.getRuntime() != null) ||
-//                        (request.getType() == Type.DIGITAL && request.getIsbn() != null)
-//        ) {
-//            return ResponseEntity.badRequest().body(
-//                    Map.of(
-//                            "message", "Media Type and Information missmatch!"
-//                    )
-//            );
-//        }
-
-//        User me = userService.findMe();
-//        Item item = itemServiceUtils.saveItem(request, me);
-//        Set<TagDto> tags = itemServiceUtils.getTags(item);
-//        Set<UserDto> owners = itemServiceUtils.getOwners(item);
-//        int stock = itemServiceUtils.getStock(item);
-//        if (request.getType() == Type.BOOK) {
-//            URI uri = uriBuilder.path("/items/{id}").buildAndExpand(item.getId()).toUri();
-//            return ResponseEntity.created(uri).body(bookMapper.toDto((Book) item, tags, owners, stock));
-//        } else if (request.getType() == Type.DIGITAL) {
-//            Set<ActorDto> actors = itemServiceUtils.getActors((Digital) item);
-//            Set<LanguageDto> languages = itemServiceUtils.getLanguages((Digital) item);
-//            Set<SubtitleDto> subtitles = itemServiceUtils.getSubtitles((Digital) item);
-//            var uri = uriBuilder.path("/items/{id}").buildAndExpand(item.getId()).toUri();
-//            return ResponseEntity.created(uri).body(digitalMapper.toDto((Digital) item, tags, actors, languages, subtitles, owners, stock));
-//        } else {
-//            return ResponseEntity.badRequest().body(
-//                    Map.of(
-//                            "message", "Type is either BOOK or DIGITAL and is required"
-//                    )
-//            );
-//        }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> itemDetails(
@@ -144,7 +87,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto dto = service.utils().getItemDetails(id, service);
-        //ItemDto dto = itemServiceUtils.getItemDetails(id);
         return ResponseEntity.ok(dto);
     }
 
@@ -155,7 +97,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto item = service.utils().updateTitle(id, request, service);
-        //ItemDto item = itemServiceUtils.updateTitle(id, request);
         return ResponseEntity.ok(item);
     }
 
@@ -166,7 +107,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto item = service.utils().updatePlace(id, request, service);
-//        ItemDto item = itemServiceUtils.updatePlace(id, request);
         return ResponseEntity.ok(item);
     }
 
@@ -177,7 +117,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto item = service.utils().updateTopic(id, request, service);
-//        ItemDto item = itemServiceUtils.updateTopic(id, request);
         return ResponseEntity.ok(item);
     }
 
@@ -188,7 +127,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto item = service.utils().updateNote(id, request, service);
-//        ItemDto item = itemServiceUtils.updateNote(id, request);
         return ResponseEntity.ok(item);
     }
 
@@ -199,7 +137,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto item = service.utils().addTag(id, request, service);
-//        ItemDto item = itemServiceUtils.addTag(id, request);
         return ResponseEntity.ok(item);
     }
 
@@ -210,7 +147,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto item = service.utils().removeTag(id, request, service);
-//        ItemDto item = itemServiceUtils.removeTag(id, request);
         return ResponseEntity.ok(item);
     }
 
@@ -330,7 +266,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         DonationDto dto = service.utils().donateItem(id, request.getCondition(), userService, service);
-//        DonationDto dto = itemServiceUtils.donateItem(id, request.getCondition());
         URI uri = uriBuilder.path("/donations/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
     }
@@ -343,7 +278,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         RentalDto rental = service.utils().rentItem(id, request, userService, service);
-//        RentalDto rental = itemServiceUtils.rentItem(id, request);
         URI uri = uriBuilder.path("/rentals/{id}").buildAndExpand(rental.getId()).toUri();
         return ResponseEntity.created(uri).body(rental);
     }
@@ -360,7 +294,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         RentalDto rental = service.utils().decideOnRental(id, request, service);
-//        RentalDto rental = itemServiceUtils.decideOnRental(id, request);
         return ResponseEntity.ok(rental);
     }
 
@@ -370,8 +303,6 @@ public class ItemController {
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
         ItemDto itemDto = service.utils().deleteItem(id, service);
-//        ItemDto itemDto = itemServiceUtils.deleteItem(id);
         return ResponseEntity.ok(itemDto);
     }
-
 }

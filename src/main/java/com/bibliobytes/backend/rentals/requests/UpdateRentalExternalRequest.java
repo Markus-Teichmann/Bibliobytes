@@ -2,7 +2,6 @@ package com.bibliobytes.backend.rentals.requests;
 
 import com.bibliobytes.backend.validation.lowercase.Lowercase;
 import com.bibliobytes.backend.validation.validexternalid.ValidExternalId;
-import com.bibliobytes.backend.validation.validuserid.ValidUserId;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import lombok.Data;

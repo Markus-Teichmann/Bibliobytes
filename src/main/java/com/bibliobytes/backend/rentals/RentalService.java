@@ -1,8 +1,6 @@
 package com.bibliobytes.backend.rentals;
 
 import com.bibliobytes.backend.items.ItemService;
-import com.bibliobytes.backend.items.ItemServiceDispatcher;
-import com.bibliobytes.backend.items.items.ItemServiceUtils;
 import com.bibliobytes.backend.items.items.dtos.ItemDto;
 import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;

@@ -31,7 +31,6 @@ import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
-import com.bibliobytes.backend.validation.validdigitalid.ValidDigitalId;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -102,28 +101,17 @@ public class DigitalService implements ItemService {
     public Set<ActorDto> getActors(Digital digital) {
         return digital.getActors().stream().map(actor -> actorMapper.toDto(actor))
                 .collect(Collectors.toSet());
-//        return actorRepository.findAllByItemId(digital.getId()).stream()
-//                .map(actor -> actorMapper.toDto(actor)).collect(Collectors.toSet());
     }
 
     public Set<LanguageDto> getLanguages(Digital digital) {
         return digital.getLanguages().stream().map(language -> languageMapper.toDto(language))
                 .collect(Collectors.toSet());
-//        return languageRepository.findAllByItemId(digital.getId()).stream()
-//                .map(language -> languageMapper.toDto(language)).collect(Collectors.toSet());
     }
 
     public Set<SubtitleDto> getSubtitles(Digital digital) {
         return digital.getSubtitles().stream().map(subtitle -> subtitleMapper.toDto(subtitle))
                 .collect(Collectors.toSet());
-//        return subtitleRepository.findAllByItemId(digital.getId()).stream()
-//                .map(subtitle -> subtitleMapper.toDto(subtitle)).collect(Collectors.toSet());
     }
-
-//    public DigitalDto getItemDetails(@ValidDigitalId long id) {
-//        Digital digital = itemRepository.findDigitalById(id).orElse(null);
-//        return toDto(digital);
-//    }
 
     @Transactional
     public DonationDto donateItem(DonateNewItemRequest request, UserService userService) {

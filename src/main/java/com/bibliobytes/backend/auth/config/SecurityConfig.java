@@ -142,15 +142,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-/*
-.requestMatchers(HttpMethod.GET,"/users").hasRole(Role.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT,"/users/update/credentials").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT,"/users/update/credentials/confirm").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT,"/users/update/profile").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT,"/users/update/role").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.DELETE,"/users").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET,"/users/applicants").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.POST,"/auth/refresh").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET,"/auth/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.POST, "/items/donate").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
- */

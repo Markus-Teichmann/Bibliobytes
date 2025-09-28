@@ -6,22 +6,15 @@ import com.bibliobytes.backend.donations.DonationService;
 import com.bibliobytes.backend.donations.dtos.DonationDto;
 import com.bibliobytes.backend.items.items.ItemServiceUtils;
 import com.bibliobytes.backend.rentals.RentalService;
-import com.bibliobytes.backend.users.requests.WithdrawDonationRequest;
-import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
-import com.bibliobytes.backend.users.UserMapper;
-import com.bibliobytes.backend.users.UserNotFoundException;
 import com.bibliobytes.backend.users.UserService;
-import com.bibliobytes.backend.users.requests.ConfirmationCodeRequest;
-import com.bibliobytes.backend.users.dtos.*;
-import com.bibliobytes.backend.users.entities.User;
+import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.requests.*;
 import com.bibliobytes.backend.validation.notexpired.NotExpired;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -52,9 +45,6 @@ public class MeController {
             @RequestBody @Valid UpdateFirstNameRequest request
     ) {
         UserDto me = userService.updateFirstName(request);
-        if (me == null) {
-            throw new UserNotFoundException();
-        }
         return ResponseEntity.ok().body(me);
     }
 
@@ -63,9 +53,6 @@ public class MeController {
             @RequestBody @Valid UpdateLastNameRequest request
     ) {
         UserDto me = userService.updateLastName(request);
-        if (me == null) {
-            throw new UserNotFoundException();
-        }
         return ResponseEntity.ok(me);
     }
 
@@ -138,10 +125,6 @@ public class MeController {
     ) {
         UUID myId = userService.getMyId();
         donationService.withdrawDonation(myId, request, itemServiceUtils);
-//        DonationDto donation =
-//        if (donation == null) {
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Donation not found."));
-//        }
         return ResponseEntity.ok(donationService.getAllDonations(myId, itemServiceUtils));
     }
 

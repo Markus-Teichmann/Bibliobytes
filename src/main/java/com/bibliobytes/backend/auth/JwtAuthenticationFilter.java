@@ -4,8 +4,6 @@ import com.bibliobytes.backend.auth.dtos.AccessTokenDto;
 import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.users.entities.Role;
-import com.bibliobytes.backend.validation.validuserid.ValidUserId;
-import com.bibliobytes.backend.validation.validuserrole.ValidUserRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -73,11 +71,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // Authentication setzen.
         var authentication = generateAuthentication(dto.getId(), dto.getRole());
-//                new UsernamePasswordAuthenticationToken(
-//                dto.getId().toString(),
-//                null,
-//                List.of(new SimpleGrantedAuthority("ROLE_" + dto.getRole().name()))
-//        );
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request)
         );

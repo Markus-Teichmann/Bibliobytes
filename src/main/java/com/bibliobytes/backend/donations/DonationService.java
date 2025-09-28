@@ -1,12 +1,13 @@
 package com.bibliobytes.backend.donations;
 
-import com.bibliobytes.backend.donations.dtos.*;
+import com.bibliobytes.backend.donations.dtos.DonationDto;
 import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.donations.entities.DonationState;
-import com.bibliobytes.backend.donations.requests.*;
+import com.bibliobytes.backend.donations.requests.UpdateConditionRequest;
+import com.bibliobytes.backend.donations.requests.UpdateDonationStatusRequest;
+import com.bibliobytes.backend.donations.requests.UpdateItemRequest;
+import com.bibliobytes.backend.donations.requests.UpdateOwnerRequest;
 import com.bibliobytes.backend.items.ItemService;
-import com.bibliobytes.backend.items.ItemServiceDispatcher;
-import com.bibliobytes.backend.items.items.ItemServiceUtils;
 import com.bibliobytes.backend.items.items.dtos.ItemDto;
 import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.items.items.repositorys.ItemRepository;
@@ -91,6 +92,4 @@ public class DonationService {
         ItemDto item = itemService.toDto(donation.getItem());
         return donationMapper.toDto(donation, owner, item);
     }
-
-
 }

@@ -43,15 +43,6 @@ public class Jwe {
         return type.cast(deserializedDto);
     }
 
-//    public Optional<?> toDto() {
-//        Class<?> targetType = getDtoClass();
-//        Object deserializedDto = deserialize();
-//        if (!targetType.isInstance(deserializedDto)) {
-//            return Optional.empty();
-//        }
-//        return Optional.of(targetType.cast(deserializedDto));
-//    }
-
     private Class<?> getDtoClass() {
         String className = (String) claims.getClaim("dtoClassName");
         Class<?> type = null;

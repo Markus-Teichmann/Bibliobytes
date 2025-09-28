@@ -9,7 +9,6 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface DonationMapper {
-    //Donation toEntity(DonationDto dto);
     @Mapping(target = "state", expression = "java(donation.getStatus())")
     @Mapping(target = "id", expression = "java(donation.getId())")
     @Mapping(target = "owner", source = "owner")

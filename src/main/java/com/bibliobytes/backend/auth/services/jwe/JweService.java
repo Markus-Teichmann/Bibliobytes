@@ -92,23 +92,6 @@ public class JweService {
         );
     }
 
-//    public Jwe generateUpdateUserCredentialsToken(UpdateCredentialsRequest dto) throws Exception {
-//        String code = mailService.sendCodeTo(dto.getOldEmail());
-//        if (dto.getNewEmail() != null) {
-//            code += mailService.sendCodeTo(dto.getNewEmail());
-//        }
-//        return generateToken(
-//                dto.getOldEmail(),
-//                Map.of(
-//                        "code", code,
-//                        "dto", dto,
-//                        "dtoClassName", dto.getClass().getName()
-//                ),
-//                config.getUpdateUserCredentialsTokenExpiration()
-//        );
-//
-//    }
-
     private Jwe generateToken(String subject, Map<String, Object> claims, long expiration) throws Exception {
         var claimSetBuilder = new JWTClaimsSet.Builder()
             .subject(subject)

@@ -19,7 +19,6 @@ import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
-import com.bibliobytes.backend.validation.validbookid.ValidBookId;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,11 +35,6 @@ public class BookService implements ItemService {
     private DonationRepository donationRepository;
     private UserMapper userMapper;
     private DonationMapper donationMapper;
-
-//    public BookDto getItemDetails(@ValidBookId long id) {
-//        Book book = itemRepository.findBookById(id).orElse(null);
-//        return toDto(book);
-//    }
 
     @Transactional
     public DonationDto donateItem(DonateNewItemRequest request, UserService userService) {
