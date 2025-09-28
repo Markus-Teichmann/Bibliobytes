@@ -6,6 +6,7 @@ import com.bibliobytes.backend.auth.dtos.JweResponse;
 import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.items.ItemService;
+import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.rentals.RentalRepository;
 import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
@@ -198,6 +199,7 @@ public class UserService implements UserDetailsService {
 
     public UserDto updateRole(UUID id, UpdateRoleRequest request) {
         User user = userRepository.findById(id).orElse(null);
+        System.out.println("User: " + user);
         if (user != null) {
             user.setRole(request.getRole());
             userRepository.save(user);
@@ -205,14 +207,18 @@ public class UserService implements UserDetailsService {
         return userMapper.toDto(user);
     }
 
-    public UserDto deleteUser() {
-        UUID id = getMyId();
+    public UserDto deleteUser(UUID id) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             user.setRole(Role.EXTERNAL);
             userRepository.save(user);
         }
         return userMapper.toDto(user);
+    }
+
+    public UserDto delete() {
+        UUID myId = getMyId();
+        return deleteUser(myId);
     }
 
 //    public User updateProfile(UUID id, UpdateProfileRequest dto) {
@@ -258,6 +264,10 @@ public class UserService implements UserDetailsService {
         return rentalRepository.findAllRentalsByUser(user).stream()
                 .map(rental -> rentalService.toDto(rental, itemService))
                 .collect(Collectors.toSet());
+    }
+
+    public Set<RentalDto> getRentals(RentalService rentalService, ItemService itemService) {
+        return getRentals(getMyId(), rentalService, itemService);
     }
 
     @Override

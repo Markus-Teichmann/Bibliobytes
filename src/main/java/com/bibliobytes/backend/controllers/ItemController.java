@@ -21,6 +21,7 @@ import com.bibliobytes.backend.validation.validitemid.ValidItemId;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -28,6 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.net.URI;
 import java.util.Set;
 
+@Validated
 @RestController
 @RequestMapping("/items")
 @AllArgsConstructor

@@ -70,7 +70,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/users/search").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/users/new").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/{id}/role").hasRole(Role.ADMIN.name())
-                .requestMatchers(HttpMethod.DELETE,"/users").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/users/{id}").hasRole(Role.ADMIN.name())
 
                 .requestMatchers(HttpMethod.GET,"/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/firstname").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
@@ -82,6 +82,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/me/donations").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/donations").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/rentals").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.DELETE,"/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
 
                 .requestMatchers(HttpMethod.GET, "/items").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/items/search").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())

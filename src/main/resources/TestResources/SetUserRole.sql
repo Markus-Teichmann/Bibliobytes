@@ -1,1 +1,0 @@
-Update users u set role = 'USER' where u.email = 'user.one@bibliobytes.at'

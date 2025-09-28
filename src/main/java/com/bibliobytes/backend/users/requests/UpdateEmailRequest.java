@@ -7,9 +7,11 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @EmailsMatch(message = "Emails do not match.")
 @Data
-public class UpdateEmailRequest implements EmailRequest {
+public class UpdateEmailRequest implements EmailRequest, Serializable {
     @NotBlank(message = "Current Email required")
     @Email(message = "must be a valid email")
     @Lowercase(message = "must be in lowercase")

@@ -12,8 +12,10 @@ import com.bibliobytes.backend.validation.validdonationid.ValidDonationId;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+@Validated
 @RestController
 @RequestMapping("/donations")
 @AllArgsConstructor

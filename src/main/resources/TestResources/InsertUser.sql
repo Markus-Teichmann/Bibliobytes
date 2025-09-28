@@ -1,1 +1,1 @@
-INSERT into users (email, first_name, last_name, role, password) values ('user.one@bibliobytes.at', 'user', 'one', 'USER', '$2a$10$V142A.UAxzETbguBeSRfzOCOtPhC1OxBAsmfgD0QhgbqxFnc35rKW')
+INSERT into users (id, email, first_name, last_name, role, password) values (UUID_TO_BIN('00000000-0000-0000-0000-000000000002'),'user.one@bibliobytes.at', 'user', 'one', 'USER', '$2a$10$V142A.UAxzETbguBeSRfzOCOtPhC1OxBAsmfgD0QhgbqxFnc35rKW')

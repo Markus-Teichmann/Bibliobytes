@@ -5,6 +5,7 @@ import com.bibliobytes.backend.auth.services.jwe.JweService;
 import com.bibliobytes.backend.donations.DonationService;
 import com.bibliobytes.backend.donations.dtos.DonationDto;
 import com.bibliobytes.backend.items.items.ItemServiceUtils;
+import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.users.requests.WithdrawDonationRequest;
 import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
@@ -22,12 +23,14 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+@Validated
 @RestController
 @RequestMapping("/me")
 @AllArgsConstructor
@@ -35,6 +38,7 @@ public class MeController {
     private final DonationService donationService;
     private final UserService userService;
     private final JweService jweService;
+    private final RentalService rentalService;
     private ItemServiceUtils itemServiceUtils;
 
     @GetMapping()
@@ -51,7 +55,7 @@ public class MeController {
         if (me == null) {
             throw new UserNotFoundException();
         }
-        return ResponseEntity.ok(me);
+        return ResponseEntity.ok().body(me);
     }
 
     @PutMapping("/lastname")
@@ -93,7 +97,7 @@ public class MeController {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid Code."));
         }
         UserDto user = userService.updateEmail(jwe);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok().body(user);
     }
 
     @PostMapping("/password")
@@ -143,6 +147,13 @@ public class MeController {
 
     @GetMapping("/rentals")
     public ResponseEntity<Set<RentalDto>> getMyRentals() {
-        return null;
+        Set<RentalDto> rentals = userService.getRentals(rentalService, itemServiceUtils);
+        return ResponseEntity.ok().body(rentals);
+    }
+
+    @DeleteMapping
+    public ResponseEntity<UserDto> delete() {
+        UserDto user = userService.delete();
+        return ResponseEntity.ok().body(user);
     }
 }

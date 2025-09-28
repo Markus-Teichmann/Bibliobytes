@@ -26,12 +26,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Validated
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
@@ -119,7 +121,7 @@ public class UserController {
         Cookie refreshCookie = userService.generateRefreshCookie(request.getEmail(), jweService);
         response.addCookie(refreshCookie);
         JweResponse jweResponse = userService.generateJweResponse(request.getEmail(), jweService);
-        return ResponseEntity.ok(jweResponse);
+        return ResponseEntity.ok().body(jweResponse);
 
 //        if (user == null || user.getRole() == Role.EXTERNAL) {
 //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -154,7 +156,7 @@ public class UserController {
 
     @GetMapping()
     public ResponseEntity<Set<UserDto>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+        return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
@@ -265,8 +267,8 @@ public class UserController {
     }
 
     @PutMapping("/{id}/role")
-    public ResponseEntity<?> updateRole(
-        @PathVariable UUID id,
+    public ResponseEntity<UserDto> updateRole(
+        @PathVariable @ValidUserId UUID id,
         @Valid @RequestBody UpdateRoleRequest request
     ) {
         UserDto user = userService.updateRole(id, request);
@@ -275,14 +277,15 @@ public class UserController {
 //                    "message", "User with id" + id + " not found."
 //            ));
 //        }
-        return ResponseEntity.ok(user);
+        System.out.println("UserDto: " + user);
+        return ResponseEntity.ok().body(user);
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/{id}")
     public ResponseEntity<UserDto> deleteUser(
-            @RequestBody(required = false) DelteUserRequest request
+            @PathVariable @ValidUserId UUID id
     ) {
-        UserDto user = userService.deleteUser();
+        UserDto user = userService.deleteUser(id);
 //        if (user == null) {
 //            return ResponseEntity.notFound().build();
 //        }
@@ -421,6 +424,5 @@ public class UserController {
 //        User user = userService.updateCredentials(request);
 //        return ResponseEntity.ok().body(userMapper.toDto(user));
 //    }
-
 
 }

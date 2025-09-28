@@ -1,0 +1,1 @@
+INSERT into users (id, email, first_name, last_name, role) values (UUID_TO_BIN('00000000-0000-0000-0000-000000000000'),'external.one@bibliobytes.at', 'external', 'one', 'EXTERNAL')

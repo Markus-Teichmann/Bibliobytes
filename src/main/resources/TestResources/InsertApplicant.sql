@@ -1,0 +1,1 @@
+INSERT into users (id, email, first_name, last_name, role, password) values (UUID_TO_BIN('00000000-0000-0000-0000-000000000001'),'applicant.one@bibliobytes.at', 'applicant', 'one', 'APPLICANT', '$2a$10$V142A.UAxzETbguBeSRfzOCOtPhC1OxBAsmfgD0QhgbqxFnc35rKW')
