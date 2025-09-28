@@ -73,6 +73,10 @@ public class ItemController {
         if (request.isValidDigital()) {
             dto = digitalService.donateItem(request, userService);
         }
+        if (request.getItemId() != null) {
+            ItemService itemService = itemServiceDispatcher.dispatch(request.getItemId());
+            dto = itemService.utils().donateItem(request.getItemId(), request.getCondition(), userService, itemService);
+        }
         URI uri = uriBuilder.path("/donations/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);
     }

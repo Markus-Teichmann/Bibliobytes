@@ -46,10 +46,14 @@ public class BookService implements ItemService {
     public DonationDto donateItem(DonateNewItemRequest request, UserService userService) {
         UUID myId = userService.getMyId();
         User me = userRepository.findById(myId).orElse(null);
-        Book book = itemRepository.findBookById(request.getItemId()).orElse(null);
+        Book book = null;
+        if (request.getItemId() != null) {
+            book = itemRepository.findBookById(request.getItemId()).orElse(null);
+        }
         if (book == null) {
             book = bookMapper.toEntity(request);
         }
+        itemRepository.save(book);
         itemServiceUtils.addTags(book, request.getTags());
         Donation donation = Donation.builder().owner(me).condition(request.getCondition()).build();
         book.donate(donation);

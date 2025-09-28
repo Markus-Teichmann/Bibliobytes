@@ -44,12 +44,14 @@ public class ItemServiceUtils implements ItemService {
     private RentalMapper rentalMapper;
 
     public Set<TagDto> getTags(Item item) {
-        return tagRepository.findAllByItemId(item.getId()).stream()
-                .map(tag -> tagMapper.toDto(tag)).collect(Collectors.toSet());
+        return item.getTags().stream().map(tag -> tagMapper.toDto(tag))
+                .collect(Collectors.toSet());
+//        return tagRepository.findAllByItemId(item.getId()).stream()
+//                .map(tag -> tagMapper.toDto(tag)).collect(Collectors.toSet());
     }
 
     public Set<UserDto> getOwners(Item item) {
-        return itemRepository.findOwnersOfWithState(item.getId(), DonationState.ACCEPTED.name())
+        return donationRepository.findAllOwnersByItem(item)
                 .stream().map(user -> userMapper.toDto(user))
                 .collect(Collectors.toSet());
     }

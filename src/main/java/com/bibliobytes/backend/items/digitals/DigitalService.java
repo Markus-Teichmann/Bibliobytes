@@ -100,18 +100,24 @@ public class DigitalService implements ItemService {
     }
 
     public Set<ActorDto> getActors(Digital digital) {
-        return actorRepository.findAllByItemId(digital.getId()).stream()
-                .map(actor -> actorMapper.toDto(actor)).collect(Collectors.toSet());
+        return digital.getActors().stream().map(actor -> actorMapper.toDto(actor))
+                .collect(Collectors.toSet());
+//        return actorRepository.findAllByItemId(digital.getId()).stream()
+//                .map(actor -> actorMapper.toDto(actor)).collect(Collectors.toSet());
     }
 
     public Set<LanguageDto> getLanguages(Digital digital) {
-        return languageRepository.findAllByItemId(digital.getId()).stream()
-                .map(language -> languageMapper.toDto(language)).collect(Collectors.toSet());
+        return digital.getLanguages().stream().map(language -> languageMapper.toDto(language))
+                .collect(Collectors.toSet());
+//        return languageRepository.findAllByItemId(digital.getId()).stream()
+//                .map(language -> languageMapper.toDto(language)).collect(Collectors.toSet());
     }
 
     public Set<SubtitleDto> getSubtitles(Digital digital) {
-        return subtitleRepository.findAllByItemId(digital.getId()).stream()
-                .map(subtitle -> subtitleMapper.toDto(subtitle)).collect(Collectors.toSet());
+        return digital.getSubtitles().stream().map(subtitle -> subtitleMapper.toDto(subtitle))
+                .collect(Collectors.toSet());
+//        return subtitleRepository.findAllByItemId(digital.getId()).stream()
+//                .map(subtitle -> subtitleMapper.toDto(subtitle)).collect(Collectors.toSet());
     }
 
 //    public DigitalDto getItemDetails(@ValidDigitalId long id) {
@@ -123,10 +129,14 @@ public class DigitalService implements ItemService {
     public DonationDto donateItem(DonateNewItemRequest request, UserService userService) {
         UUID myId = userService.getMyId();
         User me = userRepository.findById(myId).orElse(null);
-        Digital digital = itemRepository.findDigitalById(request.getItemId()).orElse(null);
+        Digital digital = null;
+        if (request.getItemId() != null) {
+            digital = itemRepository.findDigitalById(request.getItemId()).orElse(null);
+        }
         if (digital == null) {
             digital = digitalMapper.toEntity(request);
         }
+        itemRepository.save(digital);
         itemServiceUtils.addTags(digital, request.getTags());
         addActors(digital, request.getActors());
         addSubtitles(digital, request.getSubtitles());
@@ -136,7 +146,9 @@ public class DigitalService implements ItemService {
         itemRepository.save(digital);
         donationRepository.save(donation);
         UserDto owner = userMapper.toDto(me);
+        System.out.println("Vermutlich genau");
         DigitalDto digitalDto = toDto(digital);
+        System.out.println("Hier.");
         return donationMapper.toDto(donation, owner, digitalDto);
     }
 

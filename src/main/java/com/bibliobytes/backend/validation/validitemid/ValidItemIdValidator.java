@@ -15,6 +15,9 @@ public class ValidItemIdValidator implements ConstraintValidator<ValidItemId, Lo
 
     @Override
     public boolean isValid(Long id, ConstraintValidatorContext context) {
+        if (id == null) {
+            return true;
+        }
         Set<Long> ids = itemRepository.findAllIds();
         return ids.contains(id);
     }
