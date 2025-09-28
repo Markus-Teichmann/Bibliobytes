@@ -31,10 +31,9 @@ import java.util.stream.Collectors;
 
 @Service("ItemService")
 @AllArgsConstructor
-public class ItemServiceUtils {
+public class ItemServiceUtils implements ItemService {
     private ItemRepository itemRepository;
     private UserRepository userRepository;
-//    private UserService userService;
     private DonationRepository donationRepository;
     private RentalRepository rentalRepository;
     private TagRepository tagRepository;
@@ -98,7 +97,8 @@ public class ItemServiceUtils {
 
     @Transactional
     public DonationDto donateItem(Long itemId, Condition condition, UserService userService ,ItemService service) {
-        User me = userService.findMe();
+        UUID myId = userService.getMyId();
+        User me = userRepository.findById(myId).orElse(null);
         Item item = itemRepository.findById(itemId).orElse(null);
         Donation donation = Donation.builder().owner(me).condition(condition).build();
         item.donate(donation);
@@ -122,7 +122,8 @@ public class ItemServiceUtils {
         if (request.forExternalUser()) {
             external = userRepository.findById(request.getExternalId()).orElse(null);
         }
-        User user = userService.findMe();
+        UUID myId = userService.getMyId();
+        User user = userRepository.findById(myId).orElse(null);
         Donation donation = donationRepository.findById(request.getDonationId()).orElse(null);
         Rental rental = rentalMapper.toEntity(donation, user, request, external);
         rentalRepository.save(rental);
@@ -211,6 +212,11 @@ public class ItemServiceUtils {
 
     public ItemDto toDto(Item item) {
         return itemMapper.toDto(item, getTags(item), getOwners(item), item.getStock());
+    }
+
+    @Override
+    public ItemServiceUtils utils() {
+        return this;
     }
 
 //    public int getStock(Item item) {

@@ -1,6 +1,8 @@
 package com.bibliobytes.backend.controllers;
 
 import com.bibliobytes.backend.auth.dtos.JweResponse;
+import com.bibliobytes.backend.items.items.ItemServiceUtils;
+import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.users.requests.*;
 import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.donations.DonationService;
@@ -35,11 +37,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserController {
     private final JweService jweService;
-    private final UserRepository userRepository;
     private final UserService userService;
-    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final DonationService donationService;
+    private final RentalService rentalService;
+    private ItemServiceUtils itemServiceUtils;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(
@@ -48,11 +50,11 @@ public class UserController {
             UriComponentsBuilder uriBuilder
     ) throws Exception {
         if (request.registerExternal()) {
-            User external = userService.registerExternal(request);
+            UserDto external = userService.registerExternal(request);
             var uri = uriBuilder.path("/users/{id}").buildAndExpand(external.getId()).toUri();
-            return ResponseEntity.created(uri).body(userMapper.toDto(external));
+            return ResponseEntity.created(uri).body(external);
         }
-        Cookie cookie = userService.generateRegisterCookie(request);
+        Cookie cookie = userService.generateRegisterCookie(request, jweService);
         response.addCookie(cookie);
         return ResponseEntity.ok().body(
                 Map.of("message", "Wir haben Ihnen einen Bestätigungscode an "
@@ -104,9 +106,9 @@ public class UserController {
         }
         RegisterUserRequest request = jwe.toDto();
         request.setPassword(passwordEncoder.encode(request.getPassword()));
-        User user = userService.registerUser(request);
+        UserDto user = userService.registerUser(request);
         var uri = uriBuilder.path("/users/{id}").buildAndExpand(user.getId()).toUri();
-        return ResponseEntity.created(uri).body(userMapper.toDto(user));
+        return ResponseEntity.created(uri).body(user);
     }
 
     @PostMapping("/login")
@@ -114,10 +116,9 @@ public class UserController {
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ) throws Exception {
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
-        Cookie refreshCookie = userService.generateRefreshCookie(user);
+        Cookie refreshCookie = userService.generateRefreshCookie(request.getEmail(), jweService);
         response.addCookie(refreshCookie);
-        JweResponse jweResponse = userService.generateJweResponse(user);
+        JweResponse jweResponse = userService.generateJweResponse(request.getEmail(), jweService);
         return ResponseEntity.ok(jweResponse);
 
 //        if (user == null || user.getRole() == Role.EXTERNAL) {
@@ -147,7 +148,7 @@ public class UserController {
     public ResponseEntity<JweResponse> refreshToken(
             @CookieValue(value = "refresh_token") @NotExpired String refreshToken // value = "name_des_cookies" vgl. login
     ) throws Exception {
-        JweResponse response = userService.generateJweResponse(refreshToken);
+        JweResponse response = userService.generateJweResponse(refreshToken, jweService);
         return ResponseEntity.ok(response);
     }
 
@@ -158,11 +159,11 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable @ValidUserId UUID id) {
-        var user = userRepository.findById(id).orElse(null);
+        UserDto user = userService.getUser(id);
 //        if (user == null) {
 //            return ResponseEntity.notFound().build();
 //        }
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}/firstname")
@@ -170,13 +171,13 @@ public class UserController {
         @PathVariable @ValidUserId UUID id,
         @Valid @RequestBody UpdateFirstNameRequest request
     ) {
-        User user = userService.updateFirstName(id, request);
+        UserDto user = userService.updateFirstName(id, request);
 //        if (user == null) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
 //                    "message", "User with id" + id + " not found."
 //            ));
 //        }
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}/lastname")
@@ -184,13 +185,13 @@ public class UserController {
             @PathVariable @ValidUserId UUID id,
             @Valid @RequestBody UpdateLastNameRequest request
     ) {
-        User user = userService.updateLastName(id, request);
+        UserDto user = userService.updateLastName(id, request);
 //        if (user == null) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
 //                    "message", "User with id" + id + " not found."
 //            ));
 //        }
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}/email")
@@ -198,13 +199,13 @@ public class UserController {
             @PathVariable @ValidUserId UUID id,
             @Valid @RequestBody UpdateEmailRequest request
     ) {
-        User user = userService.updateEmail(id, request);
+        UserDto user = userService.updateEmail(id, request);
 //        if (user == null) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
 //                    "message", "User with id" + id + " not found."
 //            ));
 //        }
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/{id}/password")
@@ -213,20 +214,20 @@ public class UserController {
             @Valid @RequestBody UpdatePasswordRequest request
     ) {
         request.setNewPassword(passwordEncoder.encode(request.getNewPassword()));
-        User user = userService.updatePassword(id, request);
+        UserDto user = userService.updatePassword(id, request);
 //        if (user == null) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
 //                    "message", "User with id" + id + " not found."
 //            ));
 //        }
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/{id}/donations")
     public ResponseEntity<Set<DonationDto>> getDonations(
             @PathVariable @ValidUserId UUID id
     ) {
-        return ResponseEntity.ok(donationService.getAllDonations(id));
+        return ResponseEntity.ok(donationService.getAllDonations(id, itemServiceUtils));
     }
 
     @PutMapping("/{id}/donations")
@@ -234,18 +235,18 @@ public class UserController {
             @PathVariable @ValidUserId UUID id,
             @Valid @RequestBody WithdrawDonationRequest request
     ) {
-        Donation donation = donationService.withdrawDonation(id, request);
-        if (donation == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Donation not found."));
-        }
-        return ResponseEntity.ok(donationService.getAllDonations(id));
+        donationService.withdrawDonation(id, request, itemServiceUtils);
+//        if (donation == null) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Donation not found."));
+//        }
+        return ResponseEntity.ok(donationService.getAllDonations(id, itemServiceUtils));
     }
 
     @GetMapping("/{id}/rentals")
     public ResponseEntity<Set<RentalDto>> getRentals(
             @PathVariable @ValidUserId UUID id
     ) {
-        Set<RentalDto> rentals = userService.getRentals(id);
+        Set<RentalDto> rentals = userService.getRentals(id, rentalService, itemServiceUtils);
         return ResponseEntity.ok(rentals);
     }
 
@@ -259,8 +260,7 @@ public class UserController {
 
     @GetMapping("/new")
     public ResponseEntity<Set<UserDto>> getApplicants() {
-        var applicants = userRepository.findAllByRole(Role.APPLICANT)
-                .stream().map(a -> userMapper.toDto(a)).collect(Collectors.toSet());
+        Set<UserDto> applicants = userService.getApplicants();
         return ResponseEntity.ok(applicants);
     }
 
@@ -269,24 +269,24 @@ public class UserController {
         @PathVariable UUID id,
         @Valid @RequestBody UpdateRoleRequest request
     ) {
-        User user = userService.updateRole(id, request);
+        UserDto user = userService.updateRole(id, request);
 //        if (user == null) {
 //            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
 //                    "message", "User with id" + id + " not found."
 //            ));
 //        }
-        return ResponseEntity.ok(userMapper.toDto(user));
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping()
     public ResponseEntity<UserDto> deleteUser(
             @RequestBody(required = false) DelteUserRequest request
     ) {
-        User user = userService.deleteUser();
+        UserDto user = userService.deleteUser();
 //        if (user == null) {
 //            return ResponseEntity.notFound().build();
 //        }
-        return ResponseEntity.ok().body(userMapper.toDto(user));
+        return ResponseEntity.ok().body(user);
     }
 
 //    @ExceptionHandler(BadCredentialsException.class)

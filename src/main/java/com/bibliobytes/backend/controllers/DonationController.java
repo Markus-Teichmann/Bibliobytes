@@ -6,6 +6,8 @@ import com.bibliobytes.backend.donations.requests.UpdateConditionRequest;
 import com.bibliobytes.backend.donations.requests.UpdateDonationStatusRequest;
 import com.bibliobytes.backend.donations.requests.UpdateItemRequest;
 import com.bibliobytes.backend.donations.requests.UpdateOwnerRequest;
+import com.bibliobytes.backend.items.ItemService;
+import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.validation.validdonationid.ValidDonationId;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -17,12 +19,14 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class DonationController {
     private final DonationService donationService;
+    private ItemServiceDispatcher itemServiceDispatcher;
 
     @GetMapping("/{id}")
     public ResponseEntity<DonationDto> getDonationById(
             @PathVariable @ValidDonationId Long id
     ) {
-        DonationDto donation = donationService.getDonationBy(id);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        DonationDto donation = donationService.getDonationBy(id, itemService);
         return ResponseEntity.ok(donation);
     }
 
@@ -31,7 +35,8 @@ public class DonationController {
             @PathVariable @ValidDonationId Long id,
             @Valid @RequestBody UpdateDonationStatusRequest request
     ) {
-        DonationDto donation = donationService.updateDonationStatus(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        DonationDto donation = donationService.updateDonationStatus(id, request, itemService);
         return ResponseEntity.ok(donation);
     }
 
@@ -40,7 +45,8 @@ public class DonationController {
             @PathVariable @ValidDonationId Long id,
             @Valid @RequestBody UpdateItemRequest request
     ) {
-        DonationDto donation = donationService.updateItem(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        DonationDto donation = donationService.updateItem(id, request, itemService);
         return ResponseEntity.ok(donation);
     }
 
@@ -49,7 +55,8 @@ public class DonationController {
             @PathVariable @ValidDonationId Long id,
             @Valid @RequestBody UpdateOwnerRequest request
     ) {
-        DonationDto donation = donationService.updateOwner(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        DonationDto donation = donationService.updateOwner(id, request, itemService);
         return ResponseEntity.ok(donation);
     }
 
@@ -58,7 +65,8 @@ public class DonationController {
             @PathVariable @ValidDonationId Long id,
             @Valid @RequestBody UpdateConditionRequest request
     ) {
-        DonationDto donation = donationService.updateCondition(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        DonationDto donation = donationService.updateCondition(id, request, itemService);
         return ResponseEntity.ok(donation);
     }
 }

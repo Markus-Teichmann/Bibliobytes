@@ -5,6 +5,7 @@ import com.bibliobytes.backend.auth.config.JweConfig;
 import com.bibliobytes.backend.auth.dtos.JweResponse;
 import com.bibliobytes.backend.auth.services.jwe.Jwe;
 import com.bibliobytes.backend.auth.services.jwe.JweService;
+import com.bibliobytes.backend.items.ItemService;
 import com.bibliobytes.backend.rentals.RentalRepository;
 import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
@@ -29,16 +30,14 @@ import java.util.stream.Collectors;
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final JweService jweService;
     private final JweConfig jweConfig;
     private final TokenMapper tokenMapper;
     private final RentalRepository rentalRepository;
-    private final RentalService rentalService;
 
-    public User registerExternal(RegisterUserRequest registerUserRequest) {
+    public UserDto registerExternal(RegisterUserRequest registerUserRequest) {
         User user = userMapper.toEntity(registerUserRequest);
         userRepository.save(user);
-        return user;
+        return userMapper.toDto(user);
     }
 
     public User registerExternal(String email, String firstName, String lastName) {
@@ -47,7 +46,7 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public Cookie generateRegisterCookie(RegisterUserRequest request) throws Exception {
+    public Cookie generateRegisterCookie(RegisterUserRequest request, JweService jweService) throws Exception {
         Jwe token = jweService.generateRegisterUserToken(request);
         Cookie cookie = new Cookie("register_token", token.toString());
         cookie.setHttpOnly(true);
@@ -57,7 +56,8 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public Cookie generateRefreshCookie(User user) throws Exception {
+    public Cookie generateRefreshCookie(String email, JweService jweService) throws Exception {
+        User user = userRepository.findByEmail(email).orElse(null);
         Jwe refreshToken = jweService.generateRefreshToken(tokenMapper.toRefreshTokenDto(user));
         Cookie cookie = new Cookie("refresh_token", refreshToken.toString());
         cookie.setHttpOnly(true);
@@ -67,25 +67,31 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public JweResponse generateJweResponse(User user) throws Exception {
+    public JweResponse generateJweResponse(User user, JweService jweService) throws Exception {
         Jwe accessToken = jweService.generateAccessToken(tokenMapper.toAccessTokenDto(user));
         return new JweResponse(accessToken.toString());
     }
 
-    public JweResponse generateJweResponse(String token) throws Exception {
-        Jwe jwe = jweService.parse(token);
-        User user = userRepository.findById(UUID.fromString(jwe.getSubject())).orElseThrow();
-        return generateJweResponse(user);
+    /*
+        In dieser Methode kann der String sowohl ein Token als auch die Email eines Users sein.
+     */
+    public JweResponse generateJweResponse(String string, JweService jweService) throws Exception {
+        User user = userRepository.findByEmail(string).orElse(null);
+        if (user == null) {
+            Jwe jwe = jweService.parse(string);
+            user = userRepository.findById(UUID.fromString(jwe.getSubject())).orElseThrow();
+        }
+        return generateJweResponse(user, jweService);
     }
 
-    public User registerUser(RegisterUserRequest request) {
+    public UserDto registerUser(RegisterUserRequest request) {
         var user = userRepository.findByEmail(request.getEmail()).orElse(null);
         if (user == null) {
             user = userMapper.toEntity(request);
         }
         user.setPassword(request.getPassword());
         userRepository.save(user);
-        return user;
+        return userMapper.toDto(user);
     }
 
 //    public User updateCredentials(UUID id, UpdateCredentialsRequest request) {
@@ -107,42 +113,42 @@ public class UserService implements UserDetailsService {
 //        return user;
 //    }
 
-    public User updateFirstName(UUID id, UpdateFirstNameRequest request) {
+    public UserDto updateFirstName(UUID id, UpdateFirstNameRequest request) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             user.setFirstName(request.getFirstName());
             userRepository.save(user);
         }
-        return user;
+        return userMapper.toDto(user);
     }
 
-    public User updateFirstName(UpdateFirstNameRequest request) {
+    public UserDto updateFirstName(UpdateFirstNameRequest request) {
         return updateFirstName(getMyId(), request);
     }
 
-    public User updateLastName(UUID id, UpdateLastNameRequest request) {
+    public UserDto updateLastName(UUID id, UpdateLastNameRequest request) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             user.setFirstName(request.getLastName());
             userRepository.save(user);
         }
-        return user;
+        return userMapper.toDto(user);
     }
 
-    public User updateLastName(UpdateLastNameRequest request) {
+    public UserDto updateLastName(UpdateLastNameRequest request) {
         return updateLastName(getMyId(), request);
     }
 
-    public User updateEmail(UUID id, UpdateEmailRequest request) {
+    public UserDto updateEmail(UUID id, UpdateEmailRequest request) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null && request.getNewEmail() != null) {
             user.setEmail(request.getNewEmail());
             userRepository.save(user);
         }
-        return user;
+        return userMapper.toDto(user);
     }
 
-    public Cookie generateUpdateEmailCookie(UpdateEmailRequest request) throws Exception {
+    public Cookie generateUpdateEmailCookie(UpdateEmailRequest request, JweService jweService) throws Exception {
         UUID id = getMyId();
         Jwe token = jweService.generateUpdateEmailToken(id, request);
         var cookie = new Cookie("update_email_token", token.toString());
@@ -153,23 +159,23 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public User updateEmail(Jwe token) {
+    public UserDto updateEmail(Jwe token) {
         UpdateEmailRequest request = token.toDto();
         UUID id = UUID.fromString(token.getSubject());
         return updateEmail(id, request);
     }
 
-    public User updatePassword(UUID id, UpdatePasswordRequest request) {
+    public UserDto updatePassword(UUID id, UpdatePasswordRequest request) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null && request.getNewPassword() != null) {
             user.setPassword(request.getNewPassword());
             userRepository.save(user);
         }
-        return user;
+        return userMapper.toDto(user);
     }
 
-    public Cookie generateUpdatePasswordCookie(UpdatePasswordRequest request) throws Exception {
-        User me = findMe();
+    public Cookie generateUpdatePasswordCookie(UpdatePasswordRequest request, JweService jweService) throws Exception {
+        UserDto me = findMe();
         Jwe token = jweService.generateUpdatePasswordToken(me.getId(), request, me.getEmail());
         var cookie = new Cookie("update_password_token", token.toString());
         cookie.setHttpOnly(true);
@@ -179,29 +185,34 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public User updatePassword(Jwe token) {
+    public UserDto updatePassword(Jwe token) {
         UpdatePasswordRequest request = token.toDto();
         UUID id = UUID.fromString(token.getSubject());
         return updatePassword(id, request);
     }
 
-    public User updateRole(UUID id, UpdateRoleRequest request) {
+    public Set<UserDto> getApplicants() {
+        return userRepository.findAllByRole(Role.APPLICANT).stream()
+                .map(a -> userMapper.toDto(a)).collect(Collectors.toSet());
+    }
+
+    public UserDto updateRole(UUID id, UpdateRoleRequest request) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             user.setRole(request.getRole());
             userRepository.save(user);
         }
-        return user;
+        return userMapper.toDto(user);
     }
 
-    public User deleteUser() {
+    public UserDto deleteUser() {
         UUID id = getMyId();
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             user.setRole(Role.EXTERNAL);
             userRepository.save(user);
         }
-        return user;
+        return userMapper.toDto(user);
     }
 
 //    public User updateProfile(UUID id, UpdateProfileRequest dto) {
@@ -223,8 +234,9 @@ public class UserService implements UserDetailsService {
         return UUID.fromString((String) authentication.getPrincipal());
     }
 
-    public User findMe() {
-        return userRepository.findById(getMyId()).orElseThrow(UserNotFoundException::new);
+    public UserDto findMe() {
+        User user = userRepository.findById(getMyId()).orElseThrow(UserNotFoundException::new);
+        return userMapper.toDto(user);
     }
 
     public Set<UserDto> getAllUsers() {
@@ -236,10 +248,15 @@ public class UserService implements UserDetailsService {
         return set;
     }
 
-    public Set<RentalDto> getRentals(UUID userId) {
+    public UserDto getUser(UUID id) {
+        User user = userRepository.findById(id).orElse(null);
+        return userMapper.toDto(user);
+    }
+
+    public Set<RentalDto> getRentals(UUID userId, RentalService rentalService, ItemService itemService) {
         User user = userRepository.findById(userId).orElse(null);
         return rentalRepository.findAllRentalsByUser(user).stream()
-                .map(rental -> rentalService.toDto(rental))
+                .map(rental -> rentalService.toDto(rental, itemService))
                 .collect(Collectors.toSet());
     }
 

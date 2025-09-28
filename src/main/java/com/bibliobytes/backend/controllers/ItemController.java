@@ -66,10 +66,10 @@ public class ItemController {
     ) {
         DonationDto dto = null;
         if (request.isValidBook()) {
-            dto = bookService.donateItem(request);
+            dto = bookService.donateItem(request, userService);
         }
         if (request.isValidDigital()) {
-            dto = digitalService.donateItem(request);
+            dto = digitalService.donateItem(request, userService);
         }
         URI uri = uriBuilder.path("/donations/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);

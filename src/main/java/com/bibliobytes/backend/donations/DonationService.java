@@ -4,6 +4,8 @@ import com.bibliobytes.backend.donations.dtos.*;
 import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.donations.entities.DonationState;
 import com.bibliobytes.backend.donations.requests.*;
+import com.bibliobytes.backend.items.ItemService;
+import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.items.items.ItemServiceUtils;
 import com.bibliobytes.backend.items.items.dtos.ItemDto;
 import com.bibliobytes.backend.items.items.entities.Item;
@@ -23,26 +25,25 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class DonationService {
-    private final ItemServiceUtils itemServiceUtils;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private DonationRepository donationRepository;
     private DonationMapper donationMapper;
     private UserMapper userMapper;
 
-    public Set<DonationDto> getAllDonations(UUID ownerId) {
+    public Set<DonationDto> getAllDonations(UUID ownerId, ItemService itemService) {
         return donationRepository.findAllByOwnerId(ownerId).stream()
-                .map(donation -> toDto(donation))
+                .map(donation -> toDto(donation, itemService))
                 .collect(Collectors.toSet());
     }
 
-    public DonationDto getDonationBy(Long id) {
+    public DonationDto getDonationBy(Long id, ItemService itemService) {
         return donationRepository.findById(id).stream()
-                .map(donation -> toDto(donation)).findFirst()
+                .map(donation -> toDto(donation, itemService)).findFirst()
                 .orElse(null);
     }
 
-    public Donation withdrawDonation(UUID userId, WithdrawDonationRequest request) {
+    public DonationDto withdrawDonation(UUID userId, WithdrawDonationRequest request, ItemService itemService) {
         Set<Long> donationIds = donationRepository.findAllDonationIdsByOwnerId(userId);
         if (!donationIds.contains(request.getDonationId())) {
             return null;
@@ -52,42 +53,42 @@ public class DonationService {
             donation.setStatus(DonationState.WITHDRAWN);
             donationRepository.save(donation);
         }
-        return donation;
+        return toDto(donation, itemService);
     }
 
-    public DonationDto updateDonationStatus(Long id, UpdateDonationStatusRequest request) {
+    public DonationDto updateDonationStatus(Long id, UpdateDonationStatusRequest request, ItemService itemService) {
         Donation donation = donationRepository.findById(id).orElse(null);
         donation.setStatus(request.getState());
         donationRepository.save(donation);
-        return toDto(donation);
+        return toDto(donation, itemService);
     }
 
-    public DonationDto updateItem(Long id, UpdateItemRequest request) {
+    public DonationDto updateItem(Long id, UpdateItemRequest request, ItemService itemService) {
         Donation donation = donationRepository.findById(id).orElse(null);
         Item item = itemRepository.findById(request.getItemId()).orElse(null);
         donation.setItem(item);
         donationRepository.save(donation);
-        return toDto(donation);
+        return toDto(donation, itemService);
     }
 
-    public DonationDto updateOwner(Long id, UpdateOwnerRequest request) {
+    public DonationDto updateOwner(Long id, UpdateOwnerRequest request, ItemService itemService) {
         Donation donation = donationRepository.findById(id).orElse(null);
         User owner = userRepository.findById(request.getOwnerId()).orElse(null);
         donation.setOwner(owner);
         donationRepository.save(donation);
-        return toDto(donation);
+        return toDto(donation, itemService);
     }
 
-    public DonationDto updateCondition(Long id, UpdateConditionRequest request) {
+    public DonationDto updateCondition(Long id, UpdateConditionRequest request, ItemService itemService) {
         Donation donation = donationRepository.findById(id).orElse(null);
         donation.setCondition(request.getCondition());
         donationRepository.save(donation);
-        return toDto(donation);
+        return toDto(donation, itemService);
     }
 
-    public DonationDto toDto(Donation donation) {
+    public DonationDto toDto(Donation donation, ItemService itemService) {
         UserDto owner = userMapper.toDto(donation.getOwner());
-        ItemDto item = itemServiceUtils.toDto(donation.getItem());
+        ItemDto item = itemService.toDto(donation.getItem());
         return donationMapper.toDto(donation, owner, item);
     }
 

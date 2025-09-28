@@ -15,6 +15,7 @@ import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.items.items.repositorys.ItemRepository;
 import com.bibliobytes.backend.items.items.requests.DonateNewItemRequest;
 import com.bibliobytes.backend.users.UserMapper;
+import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
@@ -23,13 +24,15 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service("BookService")
 @AllArgsConstructor
 public class BookService implements ItemService {
+    private final UserRepository userRepository;
     private ItemServiceUtils itemServiceUtils;
     private ItemRepository itemRepository;
     private BookMapper bookMapper;
-    private UserService userService;
     private DonationRepository donationRepository;
     private UserMapper userMapper;
     private DonationMapper donationMapper;
@@ -40,8 +43,9 @@ public class BookService implements ItemService {
 //    }
 
     @Transactional
-    public DonationDto donateItem(DonateNewItemRequest request) {
-        User me = userService.findMe();
+    public DonationDto donateItem(DonateNewItemRequest request, UserService userService) {
+        UUID myId = userService.getMyId();
+        User me = userRepository.findById(myId).orElse(null);
         Book book = itemRepository.findBookById(request.getItemId()).orElse(null);
         if (book == null) {
             book = bookMapper.toEntity(request);

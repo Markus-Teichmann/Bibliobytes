@@ -27,6 +27,7 @@ import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.items.items.repositorys.ItemRepository;
 import com.bibliobytes.backend.items.items.requests.DonateNewItemRequest;
 import com.bibliobytes.backend.users.UserMapper;
+import com.bibliobytes.backend.users.UserRepository;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
 import com.bibliobytes.backend.users.entities.User;
@@ -36,11 +37,13 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service("DigitalService")
 @AllArgsConstructor
 public class DigitalService implements ItemService {
+    private UserRepository userRepository;
     private ItemServiceUtils itemServiceUtils;
     private ActorRepository actorRepository;
     private ActorMapper actorMapper;
@@ -50,7 +53,6 @@ public class DigitalService implements ItemService {
     private SubtitleMapper subtitleMapper;
     private ItemRepository itemRepository;
     private DigitalMapper digitalMapper;
-    private UserService userService;
     private DonationRepository donationRepository;
     private UserMapper userMapper;
     private DonationMapper donationMapper;
@@ -118,8 +120,9 @@ public class DigitalService implements ItemService {
 //    }
 
     @Transactional
-    public DonationDto donateItem(DonateNewItemRequest request) {
-        User me = userService.findMe();
+    public DonationDto donateItem(DonateNewItemRequest request, UserService userService) {
+        UUID myId = userService.getMyId();
+        User me = userRepository.findById(myId).orElse(null);
         Digital digital = itemRepository.findDigitalById(request.getItemId()).orElse(null);
         if (digital == null) {
             digital = digitalMapper.toEntity(request);

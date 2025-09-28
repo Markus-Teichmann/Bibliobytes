@@ -1,5 +1,7 @@
 package com.bibliobytes.backend.controllers;
 
+import com.bibliobytes.backend.items.ItemService;
+import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
 import com.bibliobytes.backend.rentals.requests.UpdateRentalEndRequest;
@@ -16,12 +18,14 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class RentalController {
     private RentalService rentalService;
+    private ItemServiceDispatcher itemServiceDispatcher;
 
     @GetMapping("/{id}")
     public ResponseEntity<RentalDto> get(
             @PathVariable @ValidRentalId Long id
     ) {
-        RentalDto rental = rentalService.getRental(id);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        RentalDto rental = rentalService.getRental(id, itemService);
         return ResponseEntity.ok(rental);
     }
 
@@ -30,7 +34,8 @@ public class RentalController {
             @PathVariable @ValidRentalId Long id,
             @Valid @RequestBody UpdateRentalStatusRequest request
     ) {
-        RentalDto rental = rentalService.updateStatus(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        RentalDto rental = rentalService.updateStatus(id, request, itemService);
         return ResponseEntity.ok(rental);
     }
 
@@ -39,7 +44,8 @@ public class RentalController {
             @PathVariable @ValidRentalId Long id,
             @Valid @RequestBody UpdateRentalExternalRequest request
     ) {
-        RentalDto rental = rentalService.updateExternal(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        RentalDto rental = rentalService.updateExternal(id, request, itemService);
         return ResponseEntity.ok(rental);
     }
 
@@ -48,7 +54,8 @@ public class RentalController {
             @PathVariable @ValidRentalId Long id,
             @Valid @RequestBody UpdateRentalEndRequest request
     ) {
-        RentalDto rental = rentalService.updateEnd(id, request);
+        ItemService itemService = itemServiceDispatcher.dispatch(id);
+        RentalDto rental = rentalService.updateEnd(id, request, itemService);
         return ResponseEntity.ok(rental);
     }
     
