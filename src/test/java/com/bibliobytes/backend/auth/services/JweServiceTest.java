@@ -47,7 +47,7 @@ public class JweServiceTest {
     }
 
     @Test
-    public void testDecryptionFromTokenContainigValidData() {
+    public void testDecryptionFromTokenContainigValidData() throws Exception {
         System.out.println("Encrypted Token: " + encryptedToken);
         Jwe token = jweService.parse(encryptedToken);
         RegisterUserRequest returnData = token.toDto();

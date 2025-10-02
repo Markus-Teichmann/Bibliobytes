@@ -160,7 +160,7 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public UserDto updateEmail(Jwe token) {
+    public UserDto updateEmail(Jwe token) throws Exception {
         UpdateEmailRequest request = token.toDto();
         UUID id = UUID.fromString(token.getSubject());
         return updateEmail(id, request);
@@ -186,7 +186,7 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public UserDto updatePassword(Jwe token) {
+    public UserDto updatePassword(Jwe token) throws Exception {
         UpdatePasswordRequest request = token.toDto();
         UUID id = UUID.fromString(token.getSubject());
         return updatePassword(id, request);

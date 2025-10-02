@@ -63,7 +63,7 @@ public class UserController {
         @Valid @RequestBody RegisterCodeRequest codeRequest,
         @CookieValue(value = "register_token") @NotExpired String token,
         UriComponentsBuilder uriBuilder
-    ) {
+    ) throws Exception {
         Jwe jwe = jweService.parse(token);
         if (!codeRequest.getCode().matches(jwe.getCode())) {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid code"));

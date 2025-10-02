@@ -76,7 +76,7 @@ public class MeController {
     public ResponseEntity<?> updateEmail(
             @RequestBody @Valid ConfirmationCodeRequest confirm,
             @CookieValue(value = "update_email_token") @NotExpired String token
-    ) {
+    ) throws Exception {
         String code = confirm.getCodeFromOldEmail() + confirm.getCodeFromNewEmail();
 
         Jwe jwe = jweService.parse(token);
@@ -103,7 +103,7 @@ public class MeController {
     public ResponseEntity<?> updatePassword(
             @RequestBody @Valid ConfirmationCodeRequest confirm,
             @CookieValue(value = "update_password_token") @NotExpired String token
-    ) {
+    ) throws Exception {
         String code = confirm.getCodeFromOldEmail();
         Jwe jwe = jweService.parse(token);
         if (!code.matches(jwe.getCode())) {

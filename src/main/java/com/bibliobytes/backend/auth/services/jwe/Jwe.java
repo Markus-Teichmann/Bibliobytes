@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.AllArgsConstructor;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Base64;
 import java.util.Date;
@@ -34,7 +35,7 @@ public class Jwe {
         return (String) claims.getClaim("code");
     }
 
-    public <T> T toDto() {
+    public <T> T toDto() throws IOException {
         Class<T> type = (Class<T>) getDtoClass();
         Object deserializedDto = deserialize();
         if (!type.isInstance(deserializedDto)) {
@@ -43,13 +44,13 @@ public class Jwe {
         return type.cast(deserializedDto);
     }
 
-    private Class<?> getDtoClass() {
+    private Class<?> getDtoClass() throws IOException {
         String className = (String) claims.getClaim("dtoClassName");
         Class<?> type = null;
         try {
             type = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            System.out.println("Class not found: " + className);
+            throw new IOException("When deserialzing Token - No Class with Name: " + className);
         }
         return type;
     }
