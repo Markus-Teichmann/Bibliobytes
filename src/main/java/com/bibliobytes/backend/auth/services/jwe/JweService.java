@@ -50,9 +50,7 @@ public class JweService {
     }
 
     public Jwe generateRegisterUserToken(RegisterUserRequest dto) throws Exception {
-        System.out.println("Hello from JweService");
         String code = mailService.sendCodeTo(dto.getEmail());
-        System.out.println("Code: " + code);
         return generateToken(
                 dto.getEmail(),
                 Map.of(
