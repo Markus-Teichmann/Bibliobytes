@@ -78,11 +78,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityfilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // by default use a bean by the name of corsConfigurationSource
+            .cors(withDefaults())
+                    //cors -> cors.configurationSource(corsConfigurationSource())) // by default use a bean by the name of corsConfigurationSource
             .csrf(c -> c.disable())
             .authorizeHttpRequests(c -> c
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST,"/users/unique").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/register").permitAll()
+                .requestMatchers(HttpMethod.POST,"/users/correct").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/register/confirm").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/login").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/refresh").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
@@ -151,7 +154,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/owner").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/condition").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
 
-                .anyRequest().authenticated()
+                //.anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session ->

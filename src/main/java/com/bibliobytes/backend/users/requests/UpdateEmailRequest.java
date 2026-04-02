@@ -3,6 +3,7 @@ package com.bibliobytes.backend.users.requests;
 import com.bibliobytes.backend.validation.emailsmatch.EmailRequest;
 import com.bibliobytes.backend.validation.emailsmatch.EmailsMatch;
 import com.bibliobytes.backend.validation.lowercase.Lowercase;
+import com.bibliobytes.backend.validation.notTaken.NotTaken;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class UpdateEmailRequest implements EmailRequest, Serializable {
     @NotBlank(message = "New Email required")
     @Email(message = "must be a valid email")
     @Lowercase(message = "must be in lowercase")
+    @NotTaken(message = "Email is allerady taken")
     private String newEmail;
     @NotBlank(message = "Please Confirm new Email")
     @Email(message = "must be a valid email")

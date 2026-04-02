@@ -39,6 +39,13 @@ public class UserController {
     private final RentalService rentalService;
     private ItemServiceUtils itemServiceUtils;
 
+    @PostMapping("/unique")
+    public ResponseEntity<Void> emailIsUnique(
+            @Valid @RequestBody UniqueEmailRequest request
+    ) {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(
             @Valid @RequestBody RegisterUserRequest request,
@@ -56,6 +63,18 @@ public class UserController {
                 Map.of("message", "Wir haben Ihnen einen Bestätigungscode an "
                 + request.getEmail() + " geschickt.")
         );
+    }
+
+    @PostMapping("/correct")
+    public ResponseEntity<Void> correctCode(
+            @Valid @RequestBody RegisterCodeRequest request,
+            @CookieValue(value = "register_token") @NotExpired String token
+    ) {
+        Jwe jwe = jweService.parse(token);
+        if (request.getCode().matches(jwe.getCode())) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/register/confirm")
