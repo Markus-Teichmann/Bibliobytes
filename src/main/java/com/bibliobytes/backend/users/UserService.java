@@ -70,7 +70,7 @@ public class UserService implements UserDetailsService {
 
     public JweResponse generateJweResponse(User user, JweService jweService) throws Exception {
         Jwe accessToken = jweService.generateAccessToken(tokenMapper.toAccessTokenDto(user));
-        return new JweResponse(accessToken.toString());
+        return new JweResponse(accessToken.toString(), accessToken.getExpirationTime());
     }
 
     /*
@@ -186,11 +186,11 @@ public class UserService implements UserDetailsService {
         return cookie;
     }
 
-    public UserDto updatePassword(Jwe token) throws Exception {
-        UpdatePasswordRequest request = token.toDto();
-        UUID id = UUID.fromString(token.getSubject());
-        return updatePassword(id, request);
-    }
+//    public UserDto updatePassword(Jwe token) throws Exception {
+//        UpdatePasswordRequest request = token.toDto();
+//        UUID id = UUID.fromString(token.getSubject());
+//        return updatePassword(id, request);
+//    }
 
     public Set<UserDto> getApplicants() {
         return userRepository.findAllByRole(Role.APPLICANT).stream()

@@ -94,6 +94,20 @@ public class UserController {
         return ResponseEntity.created(uri).body(user);
     }
 
+    @PostMapping("/isRegisteredUser")
+    public ResponseEntity<Void> isRegisterdUser(
+            @Valid @RequestBody RegisteredUserRequest request
+    ) {
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/isUsedEmail")
+    public ResponseEntity<Void> isUsedEmail(
+            @Valid @RequestBody UsedEmailRequest request
+    ) {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> login(
             @Valid @RequestBody LoginRequest request,
@@ -105,11 +119,12 @@ public class UserController {
         return ResponseEntity.ok().body(jweResponse);
     }
 
-    @PostMapping("/refresh")
+    @GetMapping("/refresh")
     public ResponseEntity<JweResponse> refreshToken(
             @CookieValue(value = "refresh_token") @NotExpired String refreshToken // value = "name_des_cookies" vgl. login
     ) throws Exception {
         JweResponse response = userService.generateJweResponse(refreshToken, jweService);
+        System.out.println("Refreshed Token!");
         return ResponseEntity.ok(response);
     }
 

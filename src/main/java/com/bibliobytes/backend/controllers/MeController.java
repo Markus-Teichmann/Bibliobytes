@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,7 @@ public class MeController {
     private final UserService userService;
     private final JweService jweService;
     private final RentalService rentalService;
+    private final PasswordEncoder passwordEncoder;
     private ItemServiceUtils itemServiceUtils;
 
     @GetMapping()
@@ -87,6 +89,13 @@ public class MeController {
         return ResponseEntity.ok().body(user);
     }
 
+    @PostMapping("/validate/password")
+    public ResponseEntity<Void> validatePassword(
+        @RequestBody @Valid ValidatePasswordRequest request
+    ) {
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping("/password")
     public ResponseEntity<Map<String, String>> updatePassword(
             @RequestBody @Valid UpdatePasswordRequest request,
@@ -109,7 +118,10 @@ public class MeController {
         if (!code.matches(jwe.getCode())) {
             return ResponseEntity.badRequest().body(Map.of("message", "Invalid Code."));
         }
-        UserDto user = userService.updatePassword(jwe);
+        UpdatePasswordRequest request = jwe.toDto();
+        request.setNewPassword(passwordEncoder.encode(request.getNewPassword()));
+        UUID id = UUID.fromString(jwe.getSubject());
+        UserDto user = userService.updatePassword(id, request);
         return ResponseEntity.ok(user);
     }
 

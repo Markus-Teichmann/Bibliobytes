@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.Base64;
 import java.util.Date;
-import java.util.Optional;
 
 @AllArgsConstructor
 public class Jwe {
@@ -25,6 +24,10 @@ public class Jwe {
 
     public boolean isExpired() {
         return claims.getExpirationTime().before(new Date());
+    }
+
+    public Date getExpirationTime() {
+        return claims.getExpirationTime();
     }
 
     public String getSubject() {

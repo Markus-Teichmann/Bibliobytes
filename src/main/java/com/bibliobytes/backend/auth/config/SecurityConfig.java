@@ -87,8 +87,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/users/register").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/correct").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/register/confirm").permitAll()
+                .requestMatchers(HttpMethod.POST,"/users/isUsedEmail").permitAll()
+                .requestMatchers(HttpMethod.POST,"/users/isRegisteredUser").permitAll()
                 .requestMatchers(HttpMethod.POST,"/users/login").permitAll()
-                .requestMatchers(HttpMethod.POST,"/users/refresh").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET,"/users/refresh").permitAll()
                 .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/users/{id}").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/{id}/firstname").hasRole(Role.ADMIN.name())
@@ -108,6 +110,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,"/me/lastname").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST,"/me/email").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/email").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "/me/validate/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST,"/me/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/me/donations").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
@@ -154,7 +157,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/owner").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/condition").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
 
-                //.anyRequest().authenticated()
+                .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .sessionManagement(session ->

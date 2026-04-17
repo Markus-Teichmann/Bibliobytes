@@ -1,8 +1,6 @@
-package com.bibliobytes.backend.validation.registered;
+package com.bibliobytes.backend.validation.taken;
 
 import com.bibliobytes.backend.users.UserRepository;
-import com.bibliobytes.backend.users.entities.Role;
-import com.bibliobytes.backend.users.entities.User;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
@@ -12,12 +10,13 @@ import java.util.Set;
 
 @Component
 @AllArgsConstructor
-public class RegisteredValidator implements ConstraintValidator<Registered, String> {
+public class TakenValidator implements ConstraintValidator<Taken, String> {
     private UserRepository userRepository;
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        User user = userRepository.findByEmail(email).orElse(null);
-        return user != null && user.getRole() != Role.EXTERNAL && user.getRole() != Role.APPLICANT;
+        Set<String> emails = userRepository.findAllEmails();
+        return emails.contains(email);
     }
+
 }
