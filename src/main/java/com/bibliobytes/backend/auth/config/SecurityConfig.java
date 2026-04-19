@@ -112,6 +112,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT,"/me/email").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/me/validate/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST,"/me/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "/me/validate/password/code").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/me/donations").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/donations").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())

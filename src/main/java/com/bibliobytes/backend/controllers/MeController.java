@@ -108,6 +108,19 @@ public class MeController {
         ));
     }
 
+    @PostMapping("/validate/password/code")
+    public ResponseEntity<Void> validatePasswordCode(
+        @RequestBody @Valid ConfirmationCodeRequest request,
+        @CookieValue(value = "update_password_token") @NotExpired String token
+    ) {
+        String code = request.getCodeFromOldEmail();
+        Jwe jwe = jweService.parse(token);
+        if (!code.matches(jwe.getCode())) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
     @PutMapping("/password")
     public ResponseEntity<?> updatePassword(
             @RequestBody @Valid ConfirmationCodeRequest confirm,
