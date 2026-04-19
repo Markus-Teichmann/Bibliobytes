@@ -8,6 +8,7 @@ import jakarta.validation.ConstraintValidatorContext;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -17,15 +18,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, String> {
     private UserService userService;
-    private AuthenticationManager authenticationManager;
+    private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
-        String email = userService.findMe().getEmail();
-        // Genau so gelöst, wie in AuthenticValidator
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
-        );
-        return true;
+        UUID myId = userService.getMyId();
+        User me = userRepository.findById(myId).orElse(null);
+        if (me == null) {
+            return false;
+        }
+        return passwordEncoder.matches(password, me.getPassword());
     }
 }
