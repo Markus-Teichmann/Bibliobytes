@@ -22,7 +22,6 @@ spring:
       public-key: ${JWT_PUBLIC_ENCRYPTION_KEY}
       private-key: ${JWT_PRIVATE_ENCRYPTION_KEY}
   mail:
-    from: no-reply@bibliobytes.at
     host: smtp.gmail.com
     port: 587
     username: ${GMAIL_USERNAME}
