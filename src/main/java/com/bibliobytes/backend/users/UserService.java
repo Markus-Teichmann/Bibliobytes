@@ -130,7 +130,7 @@ public class UserService implements UserDetailsService {
     public UserDto updateLastName(UUID id, UpdateLastNameRequest request) {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
-            user.setFirstName(request.getLastName());
+            user.setLastName(request.getLastName());
             userRepository.save(user);
         }
         return userMapper.toDto(user);
