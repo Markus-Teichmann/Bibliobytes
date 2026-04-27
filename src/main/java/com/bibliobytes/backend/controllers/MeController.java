@@ -58,6 +58,30 @@ public class MeController {
         return ResponseEntity.ok(me);
     }
 
+    @PostMapping("/validate/oldemail/code")
+    public ResponseEntity<Void> validateOldEmailCode(
+            @RequestBody @Valid ConfirmationCodeRequest request,
+            @CookieValue(value = "update_email_token") @NotExpired String token
+    ) {
+        Jwe jwe = jweService.parse(token);
+        if(request.getCodeFromOldEmail().matches(jwe.getCode().substring(0,6))) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping("/validate/newemail/code")
+    public ResponseEntity<Void> validateNewEmailCode(
+            @RequestBody @Valid ConfirmationCodeRequest request,
+            @CookieValue(value = "update_email_token") @NotExpired String token
+    ) {
+        Jwe jwe = jweService.parse(token);
+        if(request.getCodeFromOldEmail().matches(jwe.getCode().substring(6,12))) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
     @PostMapping("/email")
     public ResponseEntity<Map<String, String>> updateEmail(
             @RequestBody @Valid UpdateEmailRequest request,

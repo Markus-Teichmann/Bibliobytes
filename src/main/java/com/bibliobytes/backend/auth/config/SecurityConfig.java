@@ -108,6 +108,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/firstname").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/lastname").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "me/validate/oldemail/code").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.POST, "me/validate/newemail/code").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST,"/me/email").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/me/email").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.POST, "/me/validate/password").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
