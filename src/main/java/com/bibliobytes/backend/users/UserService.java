@@ -166,13 +166,28 @@ public class UserService implements UserDetailsService {
         return updateEmail(id, request);
     }
 
-    public UserDto updatePassword(UUID id, UpdatePasswordRequest request) {
+    private UserDto updatePassword(UUID id, String password) {
         User user = userRepository.findById(id).orElse(null);
-        if (user != null && request.getNewPassword() != null) {
-            user.setPassword(request.getNewPassword());
+        if (user != null && password != null) {
+            user.setPassword(password);
             userRepository.save(user);
         }
         return userMapper.toDto(user);
+    }
+
+    public UserDto updatePassword(UUID id, UpdatePasswordRequest request) {
+        return updatePassword(id, request.getNewPassword());
+
+//        User user = userRepository.findById(id).orElse(null);
+//        if (user != null && request.getNewPassword() != null) {
+//            user.setPassword(request.getNewPassword());
+//            userRepository.save(user);
+//        }
+//        return userMapper.toDto(user);
+    }
+
+    public UserDto updatePassword(UUID id, AdminUpdatePasswordRequest request) {
+        return updatePassword(id, request.getPassword());
     }
 
     public Cookie generateUpdatePasswordCookie(UpdatePasswordRequest request, JweService jweService) throws Exception {
@@ -252,6 +267,10 @@ public class UserService implements UserDetailsService {
         set.addAll(userRepository.findAllByRole(Role.SERVICE).stream().map(userMapper::toDto).collect(Collectors.toSet()));
         set.addAll(userRepository.findAllByRole(Role.ADMIN).stream().map(userMapper::toDto).collect(Collectors.toSet()));
         return set;
+    }
+
+    public Set<UserDto> getUsersByRole(Role role) {
+        return userRepository.findAllByRole(role).stream().map(userMapper::toDto).collect(Collectors.toSet());
     }
 
     public UserDto getUser(UUID id) {

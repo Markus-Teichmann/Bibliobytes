@@ -10,9 +10,11 @@ import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
 import com.bibliobytes.backend.users.UserService;
 import com.bibliobytes.backend.users.dtos.UserDto;
+import com.bibliobytes.backend.users.entities.Role;
 import com.bibliobytes.backend.users.requests.*;
 import com.bibliobytes.backend.validation.notexpired.NotExpired;
 import com.bibliobytes.backend.validation.validuserid.ValidUserId;
+import com.bibliobytes.backend.validation.validuserrolename.ValidUserRoleName;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -23,9 +25,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Validated
 @RestController
@@ -133,6 +138,13 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getAllUsers());
     }
 
+    @GetMapping("/role")
+    public ResponseEntity<Set<UserDto>> getUsersByRole(
+            @RequestParam @ValidUserRoleName String role
+    ) {
+        return ResponseEntity.ok().body(userService.getUsersByRole(Role.valueOf(role)));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getUser(@PathVariable @ValidUserId UUID id) {
         UserDto user = userService.getUser(id);
@@ -169,9 +181,9 @@ public class UserController {
     @PutMapping("/{id}/password")
     public ResponseEntity<?> updatePassword(
             @PathVariable @ValidUserId UUID id,
-            @Valid @RequestBody UpdatePasswordRequest request
+            @Valid @RequestBody AdminUpdatePasswordRequest request
     ) {
-        request.setNewPassword(passwordEncoder.encode(request.getNewPassword()));
+        request.setPassword(passwordEncoder.encode(request.getPassword()));
         UserDto user = userService.updatePassword(id, request);
         return ResponseEntity.ok(user);
     }

@@ -92,6 +92,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,"/users/login").permitAll()
                 .requestMatchers(HttpMethod.GET,"/users/refresh").permitAll()
                 .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, "/users/role").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET,"/users/{id}").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/{id}/firstname").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT,"/users/{id}/lastname").hasRole(Role.ADMIN.name())
