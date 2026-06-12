@@ -57,12 +57,12 @@ public class DigitalService implements ItemService {
     private DonationMapper donationMapper;
 
     @Transactional
-    public void addActors(Digital digital, Set<String> actors) {
-        for (String actorName : actors) {
-            Actor actor = actorRepository.findByName(actorName).orElse(null);
+    public void addActors(Digital digital, Set<ActorDto> actors) {
+        for (ActorDto actorDto : actors) {
+            Actor actor = actorRepository.findByName(actorDto.getName()).orElse(null);
             if (actor == null) {
                 actor = new Actor();
-                actor.setName(actorName);
+                actor.setName(actorDto.getName());
             }
             actor.addDigital(digital);
             actorRepository.save(actor);
@@ -71,12 +71,12 @@ public class DigitalService implements ItemService {
     }
 
     @Transactional
-    public void addLanguages(Digital digital, Set<String> languages) {
-        for (String languageName : languages) {
-            Language language = languageRepository.findByName(languageName).orElse(null);
+    public void addLanguages(Digital digital, Set<LanguageDto> languages) {
+        for (LanguageDto languageDto : languages) {
+            Language language = languageRepository.findByName(languageDto.getName()).orElse(null);
             if (language == null) {
                 language = new Language();
-                language.setName(languageName);
+                language.setName(languageDto.getName());
             }
             language.addDigital(digital);
             languageRepository.save(language);
@@ -85,12 +85,12 @@ public class DigitalService implements ItemService {
     }
 
     @Transactional
-    public void addSubtitles(Digital digital, Set<String> subtitles) {
-        for (String subtitleLanguage : subtitles) {
-            Subtitle subtitle = subtitleRepository.findByLanguage(subtitleLanguage).orElse(null);
+    public void addSubtitles(Digital digital, Set<SubtitleDto> subtitles) {
+        for (SubtitleDto subtitleDto : subtitles) {
+            Subtitle subtitle = subtitleRepository.findByLanguage(subtitleDto.getLanguage()).orElse(null);
             if (subtitle == null) {
                 subtitle = new Subtitle();
-                subtitle.setLanguage(subtitleLanguage);
+                subtitle.setLanguage(subtitleDto.getLanguage());
             }
             subtitle.addDigital(digital);
             subtitleRepository.save(subtitle);

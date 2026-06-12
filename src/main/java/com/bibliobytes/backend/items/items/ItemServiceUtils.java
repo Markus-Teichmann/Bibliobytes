@@ -84,12 +84,12 @@ public class ItemServiceUtils implements ItemService {
     }
 
     @Transactional
-    public void addTags(Item item, Set<String> tags) {
-        for (String tagName : tags) {
-            Tag tag = tagRepository.findByName(tagName).orElse(null);
+    public void addTags(Item item, Set<TagDto> tags) {
+        for (TagDto tagDto : tags) {
+            Tag tag = tagRepository.findByName(tagDto.getName()).orElse(null);
             if (tag == null) {
                 tag = new Tag();
-                tag.setName(tagName);
+                tag.setName(tagDto.getName());
             }
             item.addTag(tag);
             tagRepository.save(tag);

@@ -1,6 +1,10 @@
 package com.bibliobytes.backend.items.items.requests;
 
 import com.bibliobytes.backend.donations.entities.Condition;
+import com.bibliobytes.backend.items.digitals.dtos.ActorDto;
+import com.bibliobytes.backend.items.digitals.dtos.LanguageDto;
+import com.bibliobytes.backend.items.digitals.dtos.SubtitleDto;
+import com.bibliobytes.backend.items.items.dtos.TagDto;
 import com.bibliobytes.backend.items.items.entities.Type;
 import com.bibliobytes.backend.validation.ItemTypeNotBlank.ItemTypeNotBlank;
 import com.bibliobytes.backend.validation.validcondition.ValidCondition;
@@ -43,10 +47,10 @@ public class DonateNewItemRequest {
     private String label;
     //@Size(max=100)
     private String production;
-    private Set<String> actors;
-    private Set<String> subtitles;
-    private Set<String> languages;
-    private Set<String> tags;
+    private Set<ActorDto> actors;
+    private Set<SubtitleDto> subtitles;
+    private Set<LanguageDto> languages;
+    private Set<TagDto> tags;
 
     @AssertTrue(message = "Type is required")
     boolean typeNotNull() {
