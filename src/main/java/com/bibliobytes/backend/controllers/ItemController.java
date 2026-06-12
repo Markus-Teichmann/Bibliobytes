@@ -5,12 +5,14 @@ import com.bibliobytes.backend.items.ItemService;
 import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.items.books.BookService;
 import com.bibliobytes.backend.items.digitals.DigitalService;
+import com.bibliobytes.backend.items.digitals.dtos.ActorDto;
 import com.bibliobytes.backend.items.items.ItemServiceUtils;
 import com.bibliobytes.backend.items.books.requests.UpdateAuthorRequest;
 import com.bibliobytes.backend.items.books.requests.UpdateIsbnRequest;
 import com.bibliobytes.backend.items.books.requests.UpdatePublisherRequest;
 import com.bibliobytes.backend.items.digitals.requests.*;
 import com.bibliobytes.backend.items.items.dtos.*;
+import com.bibliobytes.backend.items.items.entities.Type;
 import com.bibliobytes.backend.items.items.requests.*;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
 import com.bibliobytes.backend.users.UserService;
@@ -53,6 +55,26 @@ public class ItemController {
         return null;
     }
 
+    @GetMapping("/tags")
+    public ResponseEntity<Set<String>> getAllTagNames() {
+        return ResponseEntity.ok(itemServiceUtils.getAllTagNames());
+    }
+
+    @GetMapping("/actors")
+    public ResponseEntity<Set<String>> getAllActorNames() {
+        return ResponseEntity.ok(digitalService.getAllActorNames());
+    }
+
+    @GetMapping("/languages")
+    public ResponseEntity<Set<String>> getAllLanguageNames() {
+        return ResponseEntity.ok(digitalService.getAllLanguageNames());
+    }
+
+    @GetMapping("/subtitles")
+    public ResponseEntity<Set<String>> getAllSubtitleLanguages() {
+        return ResponseEntity.ok(digitalService.getAllSubtitleLanguages());
+    }
+
     @GetMapping("/new")
     public ResponseEntity<Set<ItemDto>> donations() {
         return ResponseEntity.ok(itemServiceUtils.getApprovableItems());
@@ -86,7 +108,7 @@ public class ItemController {
             @PathVariable @ValidItemId Long id
     ) {
         ItemService service = itemServiceDispatcher.dispatch(id);
-        ItemDto dto = service.utils().getItemDetails(id, service);
+        ItemDto dto = service.toDto(id);
         return ResponseEntity.ok(dto);
     }
 

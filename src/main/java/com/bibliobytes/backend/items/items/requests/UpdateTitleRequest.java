@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class UpdateTitleRequest {
     @NotBlank
-    private String titel;
+    private String title;
 }

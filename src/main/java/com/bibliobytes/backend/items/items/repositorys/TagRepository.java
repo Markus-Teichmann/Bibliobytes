@@ -15,4 +15,6 @@ public interface TagRepository extends CrudRepository<Tag, Long> {
     Set<Tag> findAllByItemId(@Param("itemId") Long itemId);
     @Query("select t.id from Tag t")
     Set<Long> findAllIds();
+    @Query("select t.name from Tag t")
+    Set<String> findAllTagNames();
 }

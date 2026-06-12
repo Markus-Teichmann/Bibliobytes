@@ -11,6 +11,6 @@ import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface ItemMapper {
-    @Mapping(target = "title", expression = "java(item.getTitel())")
+    @Mapping(target = "title", expression = "java(item.getTitle())")
     ItemDto toDto(Item item, Set<TagDto> tags, Set<UserDto> owners, int stock);
 }

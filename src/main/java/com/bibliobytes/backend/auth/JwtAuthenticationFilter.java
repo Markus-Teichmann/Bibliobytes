@@ -54,6 +54,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("JwtAuthenticationFilter:");
+        System.out.println("Header gefunden.");
 
         //Kein Valider Token gefunden.
         Jwe jwe = getValidToken(request);
@@ -61,6 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("Valider Token gefunden");
 
         //Kein passendes DTO hinterlegt.
         AccessTokenDto dto = jwe.toDto();
@@ -68,6 +71,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("Passendes DTO entdeckt!");
+        System.out.println("User: " + dto.getId() + " / Role: " + dto.getRole());
 
         // Authentication setzen.
         var authentication = generateAuthentication(dto.getId(), dto.getRole());

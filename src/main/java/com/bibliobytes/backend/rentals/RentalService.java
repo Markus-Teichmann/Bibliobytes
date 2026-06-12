@@ -58,8 +58,8 @@ public class RentalService {
     }
 
     public RentalDto toDto(Rental rental, ItemService itemService) {
-        Item item = rental.getDonation().getItem();
-        ItemDto itemDto = itemService.toDto(item);
+        Long itemId = rental.getDonation().getItem().getId();
+        ItemDto itemDto = itemService.toDto(itemId);
         UserDto user = userMapper.toDto(rental.getUser());
         UserDto external = userMapper.toDto(rental.getExternal());
         return rentalMapper.toDto(rental, itemDto, user, external);

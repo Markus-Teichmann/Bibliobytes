@@ -8,6 +8,10 @@ import com.bibliobytes.backend.donations.requests.UpdateDonationStatusRequest;
 import com.bibliobytes.backend.donations.requests.UpdateItemRequest;
 import com.bibliobytes.backend.donations.requests.UpdateOwnerRequest;
 import com.bibliobytes.backend.items.ItemService;
+import com.bibliobytes.backend.items.ItemServiceDispatcher;
+import com.bibliobytes.backend.items.books.Book;
+import com.bibliobytes.backend.items.digitals.entities.Digital;
+import com.bibliobytes.backend.items.items.ItemServiceUtils;
 import com.bibliobytes.backend.items.items.dtos.ItemDto;
 import com.bibliobytes.backend.items.items.entities.Item;
 import com.bibliobytes.backend.items.items.repositorys.ItemRepository;
@@ -19,6 +23,7 @@ import com.bibliobytes.backend.users.requests.WithdrawDonationRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,6 +36,8 @@ public class DonationService {
     private DonationRepository donationRepository;
     private DonationMapper donationMapper;
     private UserMapper userMapper;
+    private ItemServiceDispatcher itemServiceDispatcher;
+    private ItemServiceUtils itemServiceUtils;
 
     public Set<DonationDto> getAllDonations(UUID ownerId, ItemService itemService) {
         return donationRepository.findAllByOwnerId(ownerId).stream()
@@ -42,6 +49,12 @@ public class DonationService {
         return donationRepository.findById(id).stream()
                 .map(donation -> toDto(donation, itemService)).findFirst()
                 .orElse(null);
+    }
+
+    public Set<DonationDto> getDonationsBy(DonationState state) {
+        return donationRepository.findAllItemIdsByStatus(state).stream()
+                .map(donation -> toDto(donation))
+                .collect(Collectors.toSet());
     }
 
     public DonationDto withdrawDonation(UUID userId, WithdrawDonationRequest request, ItemService itemService) {
@@ -89,7 +102,15 @@ public class DonationService {
 
     public DonationDto toDto(Donation donation, ItemService itemService) {
         UserDto owner = userMapper.toDto(donation.getOwner());
-        ItemDto item = itemService.toDto(donation.getItem());
+        ItemDto item = itemService.toDto(donation.getItem().getId());
+        return donationMapper.toDto(donation, owner, item);
+    }
+
+    public DonationDto toDto(Donation donation) {
+        long itemId = donation.getItem().getId();
+        ItemService itemService = itemServiceDispatcher.dispatch(itemId);
+        ItemDto item = itemService.toDto(itemId);
+        UserDto owner = userMapper.toDto(donation.getOwner());
         return donationMapper.toDto(donation, owner, item);
     }
 }

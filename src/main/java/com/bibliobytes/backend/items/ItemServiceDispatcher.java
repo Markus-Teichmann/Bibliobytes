@@ -21,8 +21,15 @@ public class ItemServiceDispatcher {
     }
 
     public ItemService dispatch(long id) {
-        Item item = itemRepository.findById(id).orElse(null);
-        return dispatch(item);
+        Book book = itemRepository.findBookById(id).orElse(null);
+        if (book == null) {
+            Digital digital = itemRepository.findDigitalById(id).orElse(null);
+            return dispatch(digital);
+        } else {
+            return dispatch(book);
+        }
+//        Item item = itemRepository.findById(id).orElse(null);
+//        return dispatch(item);
     }
 
     public ItemService dispatch(Item item) {

@@ -54,7 +54,7 @@ public class BookService implements ItemService {
         itemRepository.save(book);
         donationRepository.save(donation);
         UserDto owner = userMapper.toDto(me);
-        BookDto bookDto = toDto(book);
+        BookDto bookDto = toDto(book.getId());
         return donationMapper.toDto(donation, owner, bookDto);
     }
 
@@ -62,21 +62,21 @@ public class BookService implements ItemService {
         Book book = (Book) itemRepository.findById(id).orElse(null);
         book.setAuthor(request.getAuthor());
         itemRepository.save(book);
-        return toDto(book);
+        return toDto(id);
     }
 
     public ItemDto updatePublisher(Long id, UpdatePublisherRequest request) {
         Book book = (Book) itemRepository.findById(id).orElse(null);
         book.setPublisher(request.getPublisher());
         itemRepository.save(book);
-        return toDto(book);
+        return toDto(id);
     }
 
     public ItemDto updateIsbn(Long id, UpdateIsbnRequest request) {
         Book book = (Book) itemRepository.findById(id).orElse(null);
         book.setIsbn(request.getIsbn());
         itemRepository.save(book);
-        return toDto(book);
+        return toDto(id);
     }
 
     @Override
@@ -84,7 +84,13 @@ public class BookService implements ItemService {
         return itemServiceUtils;
     }
 
-    public BookDto toDto(Item book) {
-        return bookMapper.toDto((Book) book, itemServiceUtils.getTags(book), itemServiceUtils.getOwners(book), book.getStock());
+    @Override
+    public BookDto toDto(long id) {
+        Book book = itemRepository.findBookById(id).orElse(null);
+        if (book != null) {
+            return bookMapper.toDto(book, itemServiceUtils.getTags(book), itemServiceUtils.getOwners(book), book.getStock());
+        } else {
+            return null;
+        }
     }
 }

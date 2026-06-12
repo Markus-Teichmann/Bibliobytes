@@ -14,4 +14,6 @@ public interface LanguageRepository extends CrudRepository<Language, Long> {
     Set<Language> findAllByItemId(@Param("itemId") Long itemId);
     @Query("select l.id from Language l")
     Set<Long> findAllIds();
+    @Query("select l.name from Language l")
+    Set<String> findAllNames();
 }

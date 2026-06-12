@@ -58,21 +58,17 @@ public class ItemServiceUtils implements ItemService {
 
     public Set<ItemDto> getItems() {
         return itemRepository.findAllItems().stream()
-                .map(item -> toDto(item)).collect(Collectors.toSet());
+                .map(item -> toDto(item.getId())).collect(Collectors.toSet());
     }
 
     public Set<ItemDto> getApprovableItems() {
         Set<ItemDto> set = itemRepository.findAllByDonationStatus(DonationState.APPLIED).stream()
-                .map(item -> toDto(item)).collect(Collectors.toSet());
+                .map(item -> toDto(item.getId())).collect(Collectors.toSet());
         set.addAll(itemRepository.findAllByRentalState(RentalState.REQUESTED).stream()
-                .map(item -> toDto(item)).collect(Collectors.toSet()));
+                .map(item -> toDto(item.getId())).collect(Collectors.toSet()));
         return set;
     }
 
-    public ItemDto getItemDetails(long id, ItemService service) {
-        Item item = itemRepository.findById(id).orElse(null);
-        return service.toDto(item);
-    }
 //    public ItemDto getItemDetails(long id) {
 //        Item item = itemRepository.findById(id).orElse(null);
 //        ItemServiceUtils itemService = itemServiceDispatcher.dispatch(item);
@@ -82,6 +78,10 @@ public class ItemServiceUtils implements ItemService {
 ////        }
 ////        return digitalService.getItemDetails(id);
 //    }
+
+    public Set<String> getAllTagNames() {
+        return tagRepository.findAllTagNames();
+    }
 
     @Transactional
     public void addTags(Item item, Set<String> tags) {
@@ -107,7 +107,7 @@ public class ItemServiceUtils implements ItemService {
         itemRepository.save(item);
         donationRepository.save(donation);
         UserDto owner = userMapper.toDto(me);
-        ItemDto itemDto = service.toDto(item);
+        ItemDto itemDto = service.toDto(itemId);
         return donationMapper.toDto(donation, owner, itemDto);
     }
 
@@ -132,7 +132,7 @@ public class ItemServiceUtils implements ItemService {
         Item item = itemRepository.findById(itemId).orElse(null);
         return rentalMapper.toDto(
                 rental,
-                itemService.toDto(item),
+                itemService.toDto(itemId),
                 userMapper.toDto(user),
                 userMapper.toDto(external)
         );
@@ -147,7 +147,7 @@ public class ItemServiceUtils implements ItemService {
         Item item = itemRepository.findById(itemId).orElse(null);
         return rentalMapper.toDto(
                 rental,
-                service.toDto(item),
+                service.toDto(itemId),
                 userMapper.toDto(user),
                 userMapper.toDto(external)
         );
@@ -155,30 +155,30 @@ public class ItemServiceUtils implements ItemService {
 
     public ItemDto updateTitle(Long id, UpdateTitleRequest request, ItemService service) {
         Item item = itemRepository.findById(id).orElse(null);
-        item.setTitel(request.getTitel());
+        item.setTitle(request.getTitle());
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
     public ItemDto updatePlace(Long id, UpdatePlaceRequest request, ItemService service) {
         Item item = itemRepository.findById(id).orElse(null);
         item.setPlace(request.getPlace());
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
     public ItemDto updateTopic(Long id, UpdateTopicRequest request, ItemService service) {
         Item item = itemRepository.findById(id).orElse(null);
         item.setTopic(request.getTopic());
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
     public ItemDto updateNote(Long id, UpdateNoteRequest request, ItemService service) {
         Item item = itemRepository.findById(id).orElse(null);
         item.setNote(request.getNote());
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
     @Transactional
@@ -192,7 +192,7 @@ public class ItemServiceUtils implements ItemService {
         tag.addItem(item);
         tagRepository.save(tag);
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
     @Transactional
@@ -202,18 +202,23 @@ public class ItemServiceUtils implements ItemService {
         tag.removeItem(item);
         tagRepository.save(tag);
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
     public ItemDto deleteItem(Long id, ItemService service) {
         Item item = itemRepository.findById(id).orElse(null);
         item.setState(ItemState.REMOVED);
         itemRepository.save(item);
-        return service.toDto(item);
+        return service.toDto(id);
     }
 
-    public ItemDto toDto(Item item) {
-        return itemMapper.toDto(item, getTags(item), getOwners(item), item.getStock());
+    @Override
+    public ItemDto toDto(long id) {
+        Item item = itemRepository.findById(id).orElse(null);
+        if (item != null) {
+            return itemMapper.toDto(item, getTags(item), getOwners(item), item.getStock());
+        }
+        return null;
     }
 
     @Override

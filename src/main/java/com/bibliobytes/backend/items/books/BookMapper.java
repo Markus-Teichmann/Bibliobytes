@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface BookMapper {
-    @Mapping(target = "title", expression = "java(book.getTitel())")
+    @Mapping(target = "title", expression = "java(book.getTitle())")
     BookDto toDto(Book book, Set<TagDto> tags, Set<UserDto> owners, int stock);
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "id", ignore = true)

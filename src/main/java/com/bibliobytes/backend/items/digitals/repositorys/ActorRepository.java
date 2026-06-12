@@ -14,4 +14,6 @@ public interface ActorRepository extends CrudRepository<Actor, Long> {
     Set<Actor> findAllByItemId(@Param("itemId") Long itemId);
     @Query("select a.id from Actor a")
     Set<Long> findAllIds();
+    @Query("select a.name from Actor a")
+    Set<String> findAllNames();
 }

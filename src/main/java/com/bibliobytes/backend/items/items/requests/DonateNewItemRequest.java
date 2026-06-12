@@ -19,7 +19,7 @@ public class DonateNewItemRequest {
     private Condition condition;
     @NotBlank(message = "Titel is required")
     //@Size(max=200)
-    private String titel;
+    private String title;
     //@Size(max=100)
     private String place;
     @NotBlank(message = "Topic is required")
@@ -50,30 +50,36 @@ public class DonateNewItemRequest {
 
     @AssertTrue(message = "Type is required")
     boolean typeNotNull() {
+        System.out.println("AssertTrue Type not null: " + (type != null));
         return type != null;
     }
 
     @AssertTrue(message = "Missing required items")
     boolean validDonation() {
+        System.out.println("AssertTrue validDonation: " + (isValidBook() || isValidDigital() || itemId != null));
         return isValidBook() || isValidDigital() || itemId != null;
     }
 
     @AssertTrue(message = "Too much information. Is this a book or a digital?")
     boolean validInformation() {
-        return !(
+        boolean temp = !(
                 (isValidBook() && runtime != null) ||
                 (isValidBook() && languages != null) ||
                 (isValidDigital() && author != null) ||
                 (isValidDigital() && isbn != null) ||
                 (isValidDigital() && publisher != null)
         );
+        System.out.println("AssertTrue validInformation: " + temp);
+        return temp;
     }
 
     public boolean isValidDigital() {
-        return runtime != null && languages != null;
+        System.out.println("isValidDigital: " + (type == Type.DIGITAL && runtime != null && languages != null));
+        return runtime != null && languages != null && type == Type.DIGITAL;
     }
 
     public boolean isValidBook() {
-        return author != null && isbn != null && publisher != null;
+        System.out.println("isValidBook: " + (type == Type.BOOK && author != null && publisher != null && isbn != null));
+        return author != null && isbn != null && publisher != null && type == Type.BOOK;
     }
 }

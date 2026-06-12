@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface DigitalMapper {
-    @Mapping(target = "title", expression = "java(digital.getTitel())")
+    @Mapping(target = "title", expression = "java(digital.getTitle())")
     DigitalDto toDto(Digital digital, Set<TagDto> tags, Set<ActorDto> actors, Set<LanguageDto> languages, Set<SubtitleDto> subtitles, Set<UserDto> owners, int stock);
     @Mapping(target = "tags", ignore = true)
     @Mapping(target="id", ignore = true)

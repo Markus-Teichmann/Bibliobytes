@@ -14,4 +14,6 @@ public interface SubtitleRepository extends CrudRepository<Subtitle, Long> {
     Set<Subtitle> findAllByItemId(@Param("itemId") Long itemId);
     @Query("select s.id from Subtitle s")
     Set<Long> findAllIds();
+    @Query("select s.language from Subtitle s")
+    Set<String> findAllLanguages();
 }

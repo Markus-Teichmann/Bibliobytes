@@ -98,6 +98,18 @@ public class DigitalService implements ItemService {
         itemRepository.save(digital);
     }
 
+    public Set<String> getAllActorNames() {
+        return actorRepository.findAllNames();
+    }
+
+    public Set<String> getAllLanguageNames() {
+        return languageRepository.findAllNames();
+    }
+
+    public Set<String> getAllSubtitleLanguages() {
+        return subtitleRepository.findAllLanguages();
+    }
+
     public Set<ActorDto> getActors(Digital digital) {
         return digital.getActors().stream().map(actor -> actorMapper.toDto(actor))
                 .collect(Collectors.toSet());
@@ -135,35 +147,35 @@ public class DigitalService implements ItemService {
         donationRepository.save(donation);
         UserDto owner = userMapper.toDto(me);
         System.out.println("Vermutlich genau");
-        DigitalDto digitalDto = toDto(digital);
+        DigitalDto digitalDto = toDto(digital.getId());
         System.out.println("Hier.");
         return donationMapper.toDto(donation, owner, digitalDto);
     }
 
     public ItemDto updateRuntime(Long id, UpdateRuntimeRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         digital.setRuntime(request.getRuntime());
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     public ItemDto updateLabel(Long id, UpdateLabelRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         digital.setLabel(request.getLabel());
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     public ItemDto updateProduction(Long id, UpdateProductionRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         digital.setProduction(request.getProduction());
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Transactional
     public ItemDto addActor(Long id, AddActorRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         Actor actor = actorRepository.findById(request.getId()).orElse(null);
         if (actor == null) {
             actor = new Actor();
@@ -172,22 +184,22 @@ public class DigitalService implements ItemService {
         actor.addDigital(digital);
         actorRepository.save(actor);
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Transactional
     public ItemDto removeActor(Long id, RemoveActorRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         Actor actor = actorRepository.findById(request.getId()).orElse(null);
         actor.removeDigital(digital);
         actorRepository.save(actor);
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Transactional
     public ItemDto addLanguage(Long id, AddLanguageRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         Language language = languageRepository.findById(request.getId()).orElse(null);
         if (language == null) {
             language = new Language();
@@ -196,22 +208,22 @@ public class DigitalService implements ItemService {
         language.addDigital(digital);
         languageRepository.save(language);
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Transactional
     public ItemDto removeLanguage(Long id, RemoveLanguageRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         Language language = languageRepository.findById(request.getId()).orElse(null);
         language.removeDigital(digital);
         languageRepository.save(language);
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Transactional
     public ItemDto addSubtitle(Long id, AddSubtitleRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         Subtitle subtitle = subtitleRepository.findById(request.getId()).orElse(null);
         if (subtitle == null) {
             subtitle = new Subtitle();
@@ -220,17 +232,17 @@ public class DigitalService implements ItemService {
         subtitle.addDigital(digital);
         subtitleRepository.save(subtitle);
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Transactional
     public ItemDto removeSubtitle(Long id, RemoveSubtitleRequest request) {
-        Digital digital = (Digital) itemRepository.findById(id).orElse(null);
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
         Subtitle subtitle = subtitleRepository.findById(request.getId()).orElse(null);
         subtitle.removeDigital(digital);
         subtitleRepository.save(subtitle);
         itemRepository.save(digital);
-        return toDto(digital);
+        return toDto(id);
     }
 
     @Override
@@ -239,7 +251,12 @@ public class DigitalService implements ItemService {
     }
 
     @Override
-    public DigitalDto toDto(Item digital) {
-        return digitalMapper.toDto((Digital) digital, itemServiceUtils.getTags(digital), getActors((Digital) digital), getLanguages((Digital) digital), getSubtitles((Digital) digital), itemServiceUtils.getOwners(digital), digital.getStock());
+    public DigitalDto toDto(long id) {
+        Digital digital = itemRepository.findDigitalById(id).orElse(null);
+        if (digital != null) {
+            return digitalMapper.toDto(digital, itemServiceUtils.getTags(digital), getActors(digital), getLanguages(digital), getSubtitles(digital), itemServiceUtils.getOwners(digital), digital.getStock());
+        } else {
+            return null;
+        }
     }
 }

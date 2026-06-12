@@ -2,6 +2,7 @@ package com.bibliobytes.backend.controllers;
 
 import com.bibliobytes.backend.donations.DonationService;
 import com.bibliobytes.backend.donations.dtos.*;
+import com.bibliobytes.backend.donations.entities.DonationState;
 import com.bibliobytes.backend.donations.requests.UpdateConditionRequest;
 import com.bibliobytes.backend.donations.requests.UpdateDonationStatusRequest;
 import com.bibliobytes.backend.donations.requests.UpdateItemRequest;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @Validated
 @RestController
 @RequestMapping("/donations")
@@ -22,6 +25,13 @@ import org.springframework.web.bind.annotation.*;
 public class DonationController {
     private final DonationService donationService;
     private ItemServiceDispatcher itemServiceDispatcher;
+
+    @GetMapping("/new")
+    public ResponseEntity<Set<DonationDto>> getNewDonations() {
+        System.out.println("Methode Läuft");
+        Set<DonationDto> donations = donationService.getDonationsBy(DonationState.APPLIED);
+        return ResponseEntity.ok(donations);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<DonationDto> getDonationById(
