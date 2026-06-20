@@ -8,6 +8,5 @@ import lombok.Data;
 @Data
 public class UpdateDonationStatusRequest {
     @ValidDonationState
-    @NotBlank(message = "New State is required.")
     private DonationState state;
 }

@@ -123,6 +123,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE,"/me").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
 
                 .requestMatchers(HttpMethod.GET, "/items").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, "/items/accepted").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/items/search").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/items/new").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/items/tags").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
@@ -154,13 +155,14 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/items/{id}/rent").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE, "/items/{id}").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
 
+                .requestMatchers(HttpMethod.POST, "/rentals/new").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/rentals/{id}").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/rentals/{id}/status").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/rentals/{id}/external").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/rentals/{id}/end").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
 
+                .requestMatchers(HttpMethod.GET, "/donations").hasAnyRole(Role.USER.name(), Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/donations/{id}").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
-                .requestMatchers(HttpMethod.GET, "/donations/new").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/status").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/item").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())
                 .requestMatchers(HttpMethod.PUT, "/donations/{id}/owner").hasAnyRole(Role.SERVICE.name(), Role.ADMIN.name())

@@ -4,6 +4,7 @@ import com.bibliobytes.backend.items.ItemService;
 import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.rentals.RentalService;
 import com.bibliobytes.backend.rentals.dtos.RentalDto;
+import com.bibliobytes.backend.rentals.requests.CreateRentalRequest;
 import com.bibliobytes.backend.rentals.requests.UpdateRentalEndRequest;
 import com.bibliobytes.backend.rentals.requests.UpdateRentalExternalRequest;
 import com.bibliobytes.backend.rentals.requests.UpdateRentalStatusRequest;
@@ -58,6 +59,14 @@ public class RentalController {
     ) {
         ItemService itemService = itemServiceDispatcher.dispatch(id);
         RentalDto rental = rentalService.updateEnd(id, request, itemService);
+        return ResponseEntity.ok(rental);
+    }
+
+    @PostMapping("/new")
+    public ResponseEntity<RentalDto> create(
+        @Valid @RequestBody CreateRentalRequest request
+    ) {
+        RentalDto rental = rentalService.createRental(request);
         return ResponseEntity.ok(rental);
     }
     

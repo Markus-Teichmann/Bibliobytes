@@ -19,8 +19,12 @@ public interface ItemRepository extends CrudRepository<Item, Long> {
     Optional<Item> findById(long id);
     @Query("select b from Book b where b.id = :id")
     Optional<Book> findBookById(@Param("id") long id);
+    @Query("select b from Book b, Donation d where d.status = :state and d.item.id = b.id and d.item.stock != 0")
+    Set<Book> findBooksByDonationState(DonationState state);
     @Query("select d from Digital d where d.id = :id")
     Optional<Digital> findDigitalById(@Param("id") long id);
+    @Query("select d from Digital d, Donation don where don.status = :state and don.item.id = d.id and don.item.stock != 0")
+    Set<Digital> findDigitalsByDonationState(DonationState state);
     @Query("select i.id from Item i")
     Set<Long> findAllIds();
     @Query("select i from Item i")

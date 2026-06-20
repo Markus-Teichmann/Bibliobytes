@@ -1,5 +1,6 @@
 package com.bibliobytes.backend.rentals;
 
+import com.bibliobytes.backend.donations.dtos.DonationDto;
 import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.items.items.dtos.ItemDto;
 import com.bibliobytes.backend.items.items.requests.RentItemRequest;
@@ -10,11 +11,19 @@ import com.bibliobytes.backend.users.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.Date;
+
 @Mapper(componentModel = "spring")
 public interface RentalMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "status", ignore = true)
     Rental toEntity(Donation donation, User user, RentItemRequest rentItemRequest, User external);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    Rental toEntity(Donation donation, User user, Date startDate, Date endDate, User external);
     @Mapping(target = "id", expression = "java(rental.getId())")
     RentalDto toDto(Rental rental, ItemDto itemDto, UserDto userDto, UserDto externalDto);
+    @Mapping(target = "id", expression = "java(rental.getId())")
+    @Mapping(target = "itemDto", expression = "java(donationDto.getItem())")
+    RentalDto toDto(Rental rental, DonationDto donationDto, UserDto userDto, UserDto externalDto);
 }

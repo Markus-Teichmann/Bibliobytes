@@ -20,10 +20,10 @@ public class ItemServiceDispatcher {
         this.itemRepository = itemRepository;
     }
 
-    public ItemService dispatch(long id) {
-        Book book = itemRepository.findBookById(id).orElse(null);
+    public ItemService dispatch(long itemId) {
+        Book book = itemRepository.findBookById(itemId).orElse(null);
         if (book == null) {
-            Digital digital = itemRepository.findDigitalById(id).orElse(null);
+            Digital digital = itemRepository.findDigitalById(itemId).orElse(null);
             return dispatch(digital);
         } else {
             return dispatch(book);
@@ -32,7 +32,7 @@ public class ItemServiceDispatcher {
 //        return dispatch(item);
     }
 
-    public ItemService dispatch(Item item) {
+    private ItemService dispatch(Item item) {
         if (item instanceof Book) {
             return bookService;
         }

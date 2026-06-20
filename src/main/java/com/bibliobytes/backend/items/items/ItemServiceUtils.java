@@ -7,6 +7,7 @@ import com.bibliobytes.backend.donations.entities.Condition;
 import com.bibliobytes.backend.donations.entities.Donation;
 import com.bibliobytes.backend.donations.entities.DonationState;
 import com.bibliobytes.backend.items.ItemService;
+import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.items.items.dtos.*;
 import com.bibliobytes.backend.items.items.entities.*;
 import com.bibliobytes.backend.items.items.mappers.*;

@@ -11,6 +11,7 @@ import com.bibliobytes.backend.validation.validcondition.ValidCondition;
 import com.bibliobytes.backend.validation.validitemid.ValidItemId;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.Set;
@@ -18,7 +19,7 @@ import java.util.Set;
 @Data
 public class DonateNewItemRequest {
     @ValidItemId
-    private Long itemId;
+    private Long id;
     @ValidCondition
     private Condition condition;
     @NotBlank(message = "Titel is required")
@@ -37,7 +38,7 @@ public class DonateNewItemRequest {
     private Type type;
     //@Size(max=200)
     private String publisher;
-    //@Size(max=13)
+    @Size(max=13)
     private String isbn;
     //@Size(max=255)
     private String author;
@@ -60,8 +61,8 @@ public class DonateNewItemRequest {
 
     @AssertTrue(message = "Missing required items")
     boolean validDonation() {
-        System.out.println("AssertTrue validDonation: " + (isValidBook() || isValidDigital() || itemId != null));
-        return isValidBook() || isValidDigital() || itemId != null;
+        System.out.println("AssertTrue validDonation: " + (isValidBook() || isValidDigital() || id != null));
+        return isValidBook() || isValidDigital() || id != null;
     }
 
     @AssertTrue(message = "Too much information. Is this a book or a digital?")

@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Set;
 
 @Validated
@@ -45,6 +46,14 @@ public class ItemController {
     @GetMapping()
     public ResponseEntity<Set<ItemDto>> allItems(){
         return ResponseEntity.ok(itemServiceUtils.getItems());
+    }
+
+    @GetMapping("/accepted")
+    public ResponseEntity<Set<ItemDto>> acceptedItems(){
+        Set<ItemDto> books = bookService.getAcceptedBooks();
+        Set<ItemDto> digitals = digitalService.getAcceptedDigitals();
+        books.addAll(digitals);
+        return ResponseEntity.ok(books);
     }
 
     //ToDo: Searching is still a Todo.
@@ -95,9 +104,9 @@ public class ItemController {
         if (request.isValidDigital()) {
             dto = digitalService.donateItem(request, userService);
         }
-        if (request.getItemId() != null) {
-            ItemService itemService = itemServiceDispatcher.dispatch(request.getItemId());
-            dto = itemService.utils().donateItem(request.getItemId(), request.getCondition(), userService, itemService);
+        if (request.getId() != null) {
+            ItemService itemService = itemServiceDispatcher.dispatch(request.getId());
+            dto = itemService.utils().donateItem(request.getId(), request.getCondition(), userService, itemService);
         }
         URI uri = uriBuilder.path("/donations/{id}").buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.created(uri).body(dto);

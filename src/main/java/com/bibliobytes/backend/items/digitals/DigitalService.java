@@ -4,6 +4,7 @@ import com.bibliobytes.backend.donations.DonationMapper;
 import com.bibliobytes.backend.donations.DonationRepository;
 import com.bibliobytes.backend.donations.dtos.DonationDto;
 import com.bibliobytes.backend.donations.entities.Donation;
+import com.bibliobytes.backend.donations.entities.DonationState;
 import com.bibliobytes.backend.items.ItemService;
 import com.bibliobytes.backend.items.digitals.dtos.ActorDto;
 import com.bibliobytes.backend.items.digitals.dtos.DigitalDto;
@@ -98,6 +99,11 @@ public class DigitalService implements ItemService {
         itemRepository.save(digital);
     }
 
+    public Set<ItemDto> getAcceptedDigitals() {
+        return itemRepository.findDigitalsByDonationState(DonationState.ACCEPTED).stream()
+                .map(digital -> toDto(digital.getId())).collect(Collectors.toSet());
+    }
+
     public Set<String> getAllActorNames() {
         return actorRepository.findAllNames();
     }
@@ -130,8 +136,8 @@ public class DigitalService implements ItemService {
         UUID myId = userService.getMyId();
         User me = userRepository.findById(myId).orElse(null);
         Digital digital = null;
-        if (request.getItemId() != null) {
-            digital = itemRepository.findDigitalById(request.getItemId()).orElse(null);
+        if (request.getId() != null) {
+            digital = itemRepository.findDigitalById(request.getId()).orElse(null);
         }
         if (digital == null) {
             digital = digitalMapper.toEntity(request);

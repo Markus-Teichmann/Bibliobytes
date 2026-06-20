@@ -10,6 +10,9 @@ import com.bibliobytes.backend.donations.requests.UpdateOwnerRequest;
 import com.bibliobytes.backend.items.ItemService;
 import com.bibliobytes.backend.items.ItemServiceDispatcher;
 import com.bibliobytes.backend.validation.validdonationid.ValidDonationId;
+import com.bibliobytes.backend.validation.validdonationstate.ValidDonationState;
+import com.bibliobytes.backend.validation.validitemid.ValidItemId;
+import com.bibliobytes.backend.validation.validuserrolename.ValidUserRoleName;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,10 +29,19 @@ public class DonationController {
     private final DonationService donationService;
     private ItemServiceDispatcher itemServiceDispatcher;
 
-    @GetMapping("/new")
-    public ResponseEntity<Set<DonationDto>> getNewDonations() {
-        System.out.println("Methode Läuft");
-        Set<DonationDto> donations = donationService.getDonationsBy(DonationState.APPLIED);
+    @GetMapping(params="donationState")
+    public ResponseEntity<Set<DonationDto>> getAllDonationsByState(
+            @RequestParam @ValidDonationState DonationState donationState
+    ) {
+        Set<DonationDto> donations = donationService.getDonationsBy(donationState);
+        return ResponseEntity.ok(donations);
+    }
+
+    @GetMapping(params="itemId")
+    public ResponseEntity<Set<DonationDto>> getAllDonationsByItemId(
+            @RequestParam @ValidItemId Long itemId
+    ) {
+        Set<DonationDto> donations = donationService.getDonationsByItemId(itemId);
         return ResponseEntity.ok(donations);
     }
 
@@ -37,18 +49,16 @@ public class DonationController {
     public ResponseEntity<DonationDto> getDonationById(
             @PathVariable @ValidDonationId Long id
     ) {
-        ItemService itemService = itemServiceDispatcher.dispatch(id);
-        DonationDto donation = donationService.getDonationBy(id, itemService);
+        DonationDto donation = donationService.getDonationByDonationId(id);
         return ResponseEntity.ok(donation);
     }
 
-    @PutMapping("/{id}/status")
+    @PutMapping("/{donationId}/status")
     public ResponseEntity<DonationDto> updateStatus(
-            @PathVariable @ValidDonationId Long id,
+            @PathVariable @ValidDonationId Long donationId,
             @Valid @RequestBody UpdateDonationStatusRequest request
     ) {
-        ItemService itemService = itemServiceDispatcher.dispatch(id);
-        DonationDto donation = donationService.updateDonationStatus(id, request, itemService);
+        DonationDto donation = donationService.updateDonationStatus(donationId, request);
         return ResponseEntity.ok(donation);
     }
 

@@ -21,7 +21,9 @@ public interface DonationRepository extends CrudRepository<Donation, Long> {
     Set<Long> findAllDonationIdsByOwnerId(UUID ownerId);
     Set<Donation> findAllByOwnerId(UUID ownerId);
     @Query("select d from Donation d where d.status = :state")
-    Set<Donation> findAllItemIdsByStatus(DonationState state);
+    Set<Donation> findAllDonationsByStatus(DonationState state);
+    @Query("select d from Donation d where d.item.id = :itemId")
+    Set<Donation> findAllDonationsByItemId(Long itemId);
     int countByStatusAndItem(DonationState state, Item item);
     @Query("select d.id from Donation d")
     Set<Long> findAllIds();

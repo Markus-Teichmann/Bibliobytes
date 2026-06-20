@@ -4,6 +4,7 @@ import com.bibliobytes.backend.donations.DonationMapper;
 import com.bibliobytes.backend.donations.DonationRepository;
 import com.bibliobytes.backend.donations.dtos.DonationDto;
 import com.bibliobytes.backend.donations.entities.Donation;
+import com.bibliobytes.backend.donations.entities.DonationState;
 import com.bibliobytes.backend.items.ItemService;
 import com.bibliobytes.backend.items.books.dtos.BookDto;
 import com.bibliobytes.backend.items.books.requests.UpdateAuthorRequest;
@@ -23,7 +24,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service("BookService")
 @AllArgsConstructor
@@ -41,8 +44,8 @@ public class BookService implements ItemService {
         UUID myId = userService.getMyId();
         User me = userRepository.findById(myId).orElse(null);
         Book book = null;
-        if (request.getItemId() != null) {
-            book = itemRepository.findBookById(request.getItemId()).orElse(null);
+        if (request.getId() != null) {
+            book = itemRepository.findBookById(request.getId()).orElse(null);
         }
         if (book == null) {
             book = bookMapper.toEntity(request);
@@ -56,6 +59,11 @@ public class BookService implements ItemService {
         UserDto owner = userMapper.toDto(me);
         BookDto bookDto = toDto(book.getId());
         return donationMapper.toDto(donation, owner, bookDto);
+    }
+
+    public Set<ItemDto> getAcceptedBooks() {
+        return itemRepository.findBooksByDonationState(DonationState.ACCEPTED).stream()
+                .map(book -> toDto(book.getId())).collect(Collectors.toSet());
     }
 
     public ItemDto updateAuthor(Long id, UpdateAuthorRequest request) {

@@ -37,7 +37,6 @@ public class DonationService {
     private DonationMapper donationMapper;
     private UserMapper userMapper;
     private ItemServiceDispatcher itemServiceDispatcher;
-    private ItemServiceUtils itemServiceUtils;
 
     public Set<DonationDto> getAllDonations(UUID ownerId, ItemService itemService) {
         return donationRepository.findAllByOwnerId(ownerId).stream()
@@ -45,14 +44,20 @@ public class DonationService {
                 .collect(Collectors.toSet());
     }
 
-    public DonationDto getDonationBy(Long id, ItemService itemService) {
+    public DonationDto getDonationByDonationId(Long id) {
         return donationRepository.findById(id).stream()
-                .map(donation -> toDto(donation, itemService)).findFirst()
+                .map(donation -> toDto(donation)).findFirst()
                 .orElse(null);
     }
 
     public Set<DonationDto> getDonationsBy(DonationState state) {
-        return donationRepository.findAllItemIdsByStatus(state).stream()
+        return donationRepository.findAllDonationsByStatus(state).stream()
+                .map(donation -> toDto(donation))
+                .collect(Collectors.toSet());
+    }
+
+    public Set<DonationDto> getDonationsByItemId(Long itemId) {
+        return donationRepository.findAllDonationsByItemId(itemId).stream()
                 .map(donation -> toDto(donation))
                 .collect(Collectors.toSet());
     }
@@ -70,11 +75,11 @@ public class DonationService {
         return toDto(donation, itemService);
     }
 
-    public DonationDto updateDonationStatus(Long id, UpdateDonationStatusRequest request, ItemService itemService) {
-        Donation donation = donationRepository.findById(id).orElse(null);
+    public DonationDto updateDonationStatus(Long donationId, UpdateDonationStatusRequest request) {
+        Donation donation = donationRepository.findById(donationId).orElse(null);
         donation.setStatus(request.getState());
         donationRepository.save(donation);
-        return toDto(donation, itemService);
+        return toDto(donation);
     }
 
     public DonationDto updateItem(Long id, UpdateItemRequest request, ItemService itemService) {
